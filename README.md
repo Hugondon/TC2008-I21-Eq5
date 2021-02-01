@@ -3,7 +3,7 @@
 | Nombre | Matrícula | Cuenta |
 | ----------- | ----------- | ----------- |
 | David Gaona  | A01369337  |[Speedsterbear](https://github.com/Speedsterbear)  |
-| Jesús |  |  |
+| Jesús Morales| A01704366 | [Chucho23ale](https://github.com/Chucho23ale) |
 | Job Hernández | A00571627 | [Jnhm](https://github.com/Jnhm) |
 | Nicolas Becerra |A01704683  |[NicolasBecerraMachado](https://github.com/NicolasBecerraMachado)  |
 | Hugo Pérez | A01337226 | [hugondon](https://github.com/Hugondon)  |
@@ -11,7 +11,7 @@
 ## Tareas
 - [X] Pseudocódigo Ejercicios de Clase (7 y 8)
 - [ ] Pseudocódigo Ejercicio Propuesto
-- [ ] Implementación ejercicios de Clase (7 y 8)
+- [X] Implementación ejercicios de Clase (7 y 8)
 - [ ] Implementación ejercicio Propuesto
 - [ ] Manual de instalación/explicación
 - [ ] Video demostrativo
