@@ -3,7 +3,7 @@
 | Nombre | Matrícula | Cuenta |
 | ----------- | ----------- | ----------- |
 | David Gaona  | A01369337  |[Speedsterbear](https://github.com/Speedsterbear)  |
-| Jesús |  |  |
+| Jesús Morales| A01704366 | [Chucho23ale](https://github.com/Chucho23ale) |
 | Job Hernández | A00571627 | [Jnhms](https://github.com/Jnhm) |
 | Nicolas Becerra |A01704683  |[NicolasBecerraMachado](https://github.com/NicolasBecerraMachado)  |
 | Hugo Pérez | A01337226 | [hugondon](https://github.com/Hugondon)  |
