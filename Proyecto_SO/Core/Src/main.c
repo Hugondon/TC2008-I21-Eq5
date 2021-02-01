@@ -47,12 +47,22 @@ UART_HandleTypeDef huart1;
 osThreadId produceTaskHandle;
 osThreadId consumeTaskHandle;
 osThreadId menuTaskHandle;
+osThreadId despachadorTaskHandle;
+osThreadId empacadorTaskHandle;
+osThreadId cocineroTaskHandle;
+osThreadId cajeroTaskHandle;
+osThreadId clienteTaskHandle;
 osSemaphoreId binarySem_uartHandle;
-osSemaphoreId binarySem_ejercicio_sieteHandle;
-osSemaphoreId binarySem_ejercicio_ochoHandle;
-osSemaphoreId binarySem_ejercicio_propuestoHandle;
-osSemaphoreId Sem_disponiblesHandle;
-osSemaphoreId Sem_ocupadosHandle;
+osSemaphoreId binarySem_mesa_pedidos_disponibleHandle;
+osSemaphoreId binarySem_mesa_hamburguesas_disponibleHandle;
+osSemaphoreId binarySem_mesa_ordenes_disponibleHandle;
+osSemaphoreId binarySem_mesa_pedidos_ocupadaHandle;
+osSemaphoreId binarySem_mesa_hamburguesas_ocupadaHandle;
+osSemaphoreId binarySem_mesa_ordenes_ocupadaHandle;
+osSemaphoreId binarySem_ordenHandle;
+osSemaphoreId binarySem_cocinar_hamburguesasHandle;
+osSemaphoreId Sem_lugares_ocupadosHandle;
+osSemaphoreId Sem_lugares_disponiblesHandle;
 /* USER CODE BEGIN PV */
 bool run_first_exercise = false, run_second_exercise = false, run_our_exercise = false;
 /* USER CODE END PV */
@@ -64,6 +74,11 @@ static void MX_USART1_UART_Init(void);
 void produce(void const * argument);
 void consume(void const * argument);
 void menu(void const * argument);
+void despachador(void const * argument);
+void empacador(void const * argument);
+void cocinero(void const * argument);
+void cajero(void const * argument);
+void cliente(void const * argument);
 
 /* USER CODE BEGIN PFP */
 
@@ -116,29 +131,61 @@ int main(void)
   osSemaphoreDef(binarySem_uart);
   binarySem_uartHandle = osSemaphoreCreate(osSemaphore(binarySem_uart), 1);
 
-  /* definition and creation of binarySem_ejercicio_siete */
-  osSemaphoreDef(binarySem_ejercicio_siete);
-  binarySem_ejercicio_sieteHandle = osSemaphoreCreate(osSemaphore(binarySem_ejercicio_siete), 1);
+  /* definition and creation of binarySem_mesa_pedidos_disponible */
+  osSemaphoreDef(binarySem_mesa_pedidos_disponible);
+  binarySem_mesa_pedidos_disponibleHandle = osSemaphoreCreate(osSemaphore(binarySem_mesa_pedidos_disponible), 1);
 
-  /* definition and creation of binarySem_ejercicio_ocho */
-  osSemaphoreDef(binarySem_ejercicio_ocho);
-  binarySem_ejercicio_ochoHandle = osSemaphoreCreate(osSemaphore(binarySem_ejercicio_ocho), 1);
+  /* definition and creation of binarySem_mesa_hamburguesas_disponible */
+  osSemaphoreDef(binarySem_mesa_hamburguesas_disponible);
+  binarySem_mesa_hamburguesas_disponibleHandle = osSemaphoreCreate(osSemaphore(binarySem_mesa_hamburguesas_disponible), 1);
 
-  /* definition and creation of binarySem_ejercicio_propuesto */
-  osSemaphoreDef(binarySem_ejercicio_propuesto);
-  binarySem_ejercicio_propuestoHandle = osSemaphoreCreate(osSemaphore(binarySem_ejercicio_propuesto), 1);
+  /* definition and creation of binarySem_mesa_ordenes_disponible */
+  osSemaphoreDef(binarySem_mesa_ordenes_disponible);
+  binarySem_mesa_ordenes_disponibleHandle = osSemaphoreCreate(osSemaphore(binarySem_mesa_ordenes_disponible), 1);
 
-  /* definition and creation of Sem_disponibles */
-  osSemaphoreDef(Sem_disponibles);
-  Sem_disponiblesHandle = osSemaphoreCreate(osSemaphore(Sem_disponibles), 2);
+  /* definition and creation of binarySem_mesa_pedidos_ocupada */
+  osSemaphoreDef(binarySem_mesa_pedidos_ocupada);
+  binarySem_mesa_pedidos_ocupadaHandle = osSemaphoreCreate(osSemaphore(binarySem_mesa_pedidos_ocupada), 1);
 
-  /* definition and creation of Sem_ocupados */
-  osSemaphoreDef(Sem_ocupados);
-  Sem_ocupadosHandle = osSemaphoreCreate(osSemaphore(Sem_ocupados), 1);
+  /* definition and creation of binarySem_mesa_hamburguesas_ocupada */
+  osSemaphoreDef(binarySem_mesa_hamburguesas_ocupada);
+  binarySem_mesa_hamburguesas_ocupadaHandle = osSemaphoreCreate(osSemaphore(binarySem_mesa_hamburguesas_ocupada), 1);
+
+  /* definition and creation of binarySem_mesa_ordenes_ocupada */
+  osSemaphoreDef(binarySem_mesa_ordenes_ocupada);
+  binarySem_mesa_ordenes_ocupadaHandle = osSemaphoreCreate(osSemaphore(binarySem_mesa_ordenes_ocupada), 1);
+
+  /* definition and creation of binarySem_orden */
+  osSemaphoreDef(binarySem_orden);
+  binarySem_ordenHandle = osSemaphoreCreate(osSemaphore(binarySem_orden), 1);
+
+  /* definition and creation of binarySem_cocinar_hamburguesas */
+  osSemaphoreDef(binarySem_cocinar_hamburguesas);
+  binarySem_cocinar_hamburguesasHandle = osSemaphoreCreate(osSemaphore(binarySem_cocinar_hamburguesas), 1);
+
+  /* definition and creation of Sem_lugares_ocupados */
+  osSemaphoreDef(Sem_lugares_ocupados);
+  Sem_lugares_ocupadosHandle = osSemaphoreCreate(osSemaphore(Sem_lugares_ocupados), 1);
+
+  /* definition and creation of Sem_lugares_disponibles */
+  osSemaphoreDef(Sem_lugares_disponibles);
+  Sem_lugares_disponiblesHandle = osSemaphoreCreate(osSemaphore(Sem_lugares_disponibles), 2);
 
   /* USER CODE BEGIN RTOS_SEMAPHORES */
   /* add semaphores, ... */
-  osSemaphoreWait(Sem_ocupadosHandle, osWaitForever);
+  // Ejercicio 7
+  osSemaphoreWait(Sem_lugares_ocupadosHandle, osWaitForever);
+
+  // Ejercicio 8
+  osSemaphoreWait(binarySem_mesa_pedidos_ocupadaHandle, osWaitForever);
+  osSemaphoreWait(binarySem_mesa_hamburguesas_ocupadaHandle, osWaitForever);
+  osSemaphoreWait(binarySem_mesa_ordenes_ocupadaHandle, osWaitForever);
+
+  osSemaphoreWait(binarySem_ordenHandle, osWaitForever);
+  osSemaphoreWait(binarySem_cocinar_hamburguesasHandle, osWaitForever);
+
+  // Ejercicio propuesto
+
   /* USER CODE END RTOS_SEMAPHORES */
 
   /* USER CODE BEGIN RTOS_TIMERS */
@@ -161,6 +208,26 @@ int main(void)
   /* definition and creation of menuTask */
   osThreadDef(menuTask, menu, osPriorityAboveNormal, 0, 128);
   menuTaskHandle = osThreadCreate(osThread(menuTask), NULL);
+
+  /* definition and creation of despachadorTask */
+  osThreadDef(despachadorTask, despachador, osPriorityNormal, 0, 128);
+  despachadorTaskHandle = osThreadCreate(osThread(despachadorTask), NULL);
+
+  /* definition and creation of empacadorTask */
+  osThreadDef(empacadorTask, empacador, osPriorityNormal, 0, 128);
+  empacadorTaskHandle = osThreadCreate(osThread(empacadorTask), NULL);
+
+  /* definition and creation of cocineroTask */
+  osThreadDef(cocineroTask, cocinero, osPriorityNormal, 0, 128);
+  cocineroTaskHandle = osThreadCreate(osThread(cocineroTask), NULL);
+
+  /* definition and creation of cajeroTask */
+  osThreadDef(cajeroTask, cajero, osPriorityNormal, 0, 128);
+  cajeroTaskHandle = osThreadCreate(osThread(cajeroTask), NULL);
+
+  /* definition and creation of clienteTask */
+  osThreadDef(clienteTask, cliente, osPriorityNormal, 0, 128);
+  clienteTaskHandle = osThreadCreate(osThread(clienteTask), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -268,7 +335,7 @@ static void MX_GPIO_Init(void)
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOB, LED_EXT7_Pin|LED_EXT6_Pin|LED_EXT5_Pin|LED_EXT4_Pin
-                          |LED_EXT2_Pin|LED_EXT1_Pin|LED_EXT0_Pin, GPIO_PIN_RESET);
+                          |LED_EXT1_Pin|LED_EXT0_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(LED_EXT3_GPIO_Port, LED_EXT3_Pin, GPIO_PIN_RESET);
@@ -289,9 +356,9 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
   /*Configure GPIO pins : LED_EXT7_Pin LED_EXT6_Pin LED_EXT5_Pin LED_EXT4_Pin
-                           LED_EXT2_Pin LED_EXT1_Pin LED_EXT0_Pin */
+                           LED_EXT1_Pin LED_EXT0_Pin */
   GPIO_InitStruct.Pin = LED_EXT7_Pin|LED_EXT6_Pin|LED_EXT5_Pin|LED_EXT4_Pin
-                          |LED_EXT2_Pin|LED_EXT1_Pin|LED_EXT0_Pin;
+                          |LED_EXT1_Pin|LED_EXT0_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
@@ -303,6 +370,12 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(LED_EXT3_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : LED_EXT2_Pin */
+  GPIO_InitStruct.Pin = LED_EXT2_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(LED_EXT2_GPIO_Port, &GPIO_InitStruct);
 
 }
 
@@ -325,7 +398,7 @@ void produce(void const * argument)
   for(;;)
   {
 	  if(run_first_exercise){
-		  osSemaphoreWait(Sem_disponiblesHandle, osWaitForever);			// p(disponibles)
+		  osSemaphoreWait(Sem_lugares_disponiblesHandle, osWaitForever);			// p(disponibles)
 
 		  // ---------------------------------------------------------------------------------------
 
@@ -337,7 +410,7 @@ void produce(void const * argument)
 
 		  // ---------------------------------------------------------------------------------------
 
-		  osSemaphoreRelease(Sem_ocupadosHandle);							// v(ocupados)
+		  osSemaphoreRelease(Sem_lugares_ocupadosHandle);							// v(ocupados)
 
 		  osDelay(500);
 	  }
@@ -362,8 +435,8 @@ void consume(void const * argument)
 
 		  if(run_first_exercise){
 
-			  osSemaphoreWait(Sem_ocupadosHandle, osWaitForever);					// p(ocupados)
-			  osSemaphoreWait(Sem_ocupadosHandle, osWaitForever);					// p(ocupados)
+			  osSemaphoreWait(Sem_lugares_ocupadosHandle, osWaitForever);					// p(ocupados)
+			  osSemaphoreWait(Sem_lugares_ocupadosHandle, osWaitForever);					// p(ocupados)
 
 			  // ---------------------------------------------------------------------------------------
 
@@ -375,8 +448,8 @@ void consume(void const * argument)
 
 			  // ---------------------------------------------------------------------------------------
 
-			  osSemaphoreRelease(Sem_disponiblesHandle);							// v(disponibles)
-			  osSemaphoreRelease(Sem_disponiblesHandle);							// v(disponibles)
+			  osSemaphoreRelease(Sem_lugares_disponiblesHandle);							// v(disponibles)
+			  osSemaphoreRelease(Sem_lugares_disponiblesHandle);							// v(disponibles)
 
 			  osDelay(500);
 		  }
@@ -398,6 +471,7 @@ void menu(void const * argument)
   for(;;)
   {
 	  if(!HAL_GPIO_ReadPin(BTN_EXT2_GPIO_Port, BTN_EXT2_Pin)){
+		  // 1
 		  // osSemaphoreRelease(binarySem_ejercicio_sieteHandle);
 
 		  /* Indicadores */
@@ -411,6 +485,7 @@ void menu(void const * argument)
 		  run_our_exercise = false;
 	  }
 	  if(!HAL_GPIO_ReadPin(BTN_EXT3_GPIO_Port, BTN_EXT3_Pin)){
+		  // 2
 
 		  /* Indicadores */
 		  HAL_GPIO_WritePin(LED_EXT0_GPIO_Port, LED_EXT0_Pin, GPIO_PIN_RESET);
@@ -423,11 +498,13 @@ void menu(void const * argument)
 		  run_our_exercise = false;
 	  }
 	  if(!HAL_GPIO_ReadPin(BTN_EXT4_GPIO_Port, BTN_EXT4_Pin)){
+		  // 3
 
 		  /* Indicadores */
 		  HAL_GPIO_WritePin(LED_EXT0_GPIO_Port, LED_EXT0_Pin, GPIO_PIN_RESET);
 		  HAL_GPIO_WritePin(LED_EXT1_GPIO_Port, LED_EXT1_Pin, GPIO_PIN_RESET);
 		  HAL_GPIO_TogglePin(LED_EXT2_GPIO_Port, LED_EXT2_Pin);
+		  HAL_GPIO_TogglePin(LED_BUILTIN_GPIO_Port, LED_BUILTIN_Pin);
 		  /* Banderas */
 		  run_first_exercise = false;
 		  run_second_exercise = false;
@@ -436,6 +513,191 @@ void menu(void const * argument)
 	 osDelay(200);
   }
   /* USER CODE END menu */
+}
+
+/* USER CODE BEGIN Header_despachador */
+/**
+* @brief Function implementing the despachadorTask thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_despachador */
+void despachador(void const * argument)
+{
+  /* USER CODE BEGIN despachador */
+	char *proceso_actual = "Despachando orden\r\n";
+  /* Infinite loop */
+	  for(;;)
+	  {
+		  if(run_second_exercise){
+			  osSemaphoreWait(binarySem_ordenHandle, osWaitForever);									// p(sem)
+			  osSemaphoreWait(binarySem_mesa_ordenes_disponibleHandle, osWaitForever);					// p(sem)
+
+			  // ---------------------------------------------------------------------------------------
+
+
+			  osSemaphoreWait(binarySem_uartHandle, osWaitForever);					// p(sem)
+			  HAL_UART_Transmit(&huart1, (uint8_t *) proceso_actual, strlen(proceso_actual), 1000);
+			  osSemaphoreRelease(binarySem_uartHandle);								// v(sem)
+
+
+			  // ---------------------------------------------------------------------------------------
+			  osSemaphoreRelease(binarySem_cocinar_hamburguesasHandle);
+			  osSemaphoreRelease(binarySem_mesa_ordenes_ocupadaHandle);
+		  }
+		  osDelay(200);
+	  }
+  /* USER CODE END despachador */
+}
+
+/* USER CODE BEGIN Header_empacador */
+/**
+* @brief Function implementing the empacadorTask thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_empacador */
+void empacador(void const * argument)
+{
+  /* USER CODE BEGIN empacador */
+	char *proceso_actual = "Empacador\r\n";
+  /* Infinite loop */
+	  for(;;)
+	  {
+
+		  if(run_second_exercise){
+
+			  osSemaphoreWait(binarySem_mesa_ordenes_ocupadaHandle,osWaitForever);
+			  osSemaphoreWait(binarySem_mesa_hamburguesas_ocupadaHandle,osWaitForever);
+			  // osSemaphoreWait(binarySem_mesa_ordenes_disponibleHandle,osWaitForever);
+
+
+			  // ---------------------------------------------------------------------------------------
+
+
+			  osSemaphoreWait(binarySem_uartHandle, osWaitForever);					// p(sem)
+			  HAL_UART_Transmit(&huart1, (uint8_t *) proceso_actual, strlen(proceso_actual), 1000);
+			  osSemaphoreRelease(binarySem_uartHandle);								// v(sem)
+
+
+			  // ---------------------------------------------------------------------------------------
+
+			  osSemaphoreRelease(binarySem_mesa_hamburguesas_disponibleHandle);
+			  osSemaphoreRelease(binarySem_mesa_ordenes_disponibleHandle);
+			  osSemaphoreRelease(binarySem_mesa_pedidos_ocupadaHandle);
+
+		  }
+		  osDelay(200);
+	  }
+  /* USER CODE END empacador */
+}
+
+/* USER CODE BEGIN Header_cocinero */
+/**
+* @brief Function implementing the cocineroTask thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_cocinero */
+void cocinero(void const * argument)
+{
+  /* USER CODE BEGIN cocinero */
+	char *proceso_actual = "Cocinero\r\n";
+  /* Infinite loop */
+	  for(;;)
+	  {
+
+		  if(run_second_exercise){
+
+			  osSemaphoreWait(binarySem_cocinar_hamburguesasHandle, osWaitForever);
+			  osSemaphoreWait(binarySem_mesa_hamburguesas_disponibleHandle, osWaitForever);
+
+			  // ---------------------------------------------------------------------------------------
+
+
+			  osSemaphoreWait(binarySem_uartHandle, osWaitForever);					// p(sem)
+			  HAL_UART_Transmit(&huart1, (uint8_t *) proceso_actual, strlen(proceso_actual), 1000);
+			  osSemaphoreRelease(binarySem_uartHandle);								// v(sem)
+
+
+			  // ---------------------------------------------------------------------------------------
+
+			  osSemaphoreRelease(binarySem_mesa_hamburguesas_ocupadaHandle);
+
+		  }
+		  osDelay(200);
+	  }
+  /* USER CODE END cocinero */
+}
+
+/* USER CODE BEGIN Header_cajero */
+/**
+* @brief Function implementing the cajeroTask thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_cajero */
+void cajero(void const * argument)
+{
+  /* USER CODE BEGIN cajero */
+	char *proceso_actual = "Cajero. Disfruta tu McTrio\r\n";
+  /* Infinite loop */
+	  for(;;)
+	  {
+
+		  if(run_second_exercise){
+
+			  osSemaphoreWait(binarySem_mesa_pedidos_ocupadaHandle, osWaitForever);
+
+			  // ---------------------------------------------------------------------------------------
+
+
+			  osSemaphoreWait(binarySem_uartHandle, osWaitForever);					// p(sem)
+			  HAL_UART_Transmit(&huart1, (uint8_t *) proceso_actual, strlen(proceso_actual), 1000);
+			  osSemaphoreRelease(binarySem_uartHandle);								// v(sem)
+
+
+			  // ---------------------------------------------------------------------------------------
+
+			  osSemaphoreRelease(binarySem_mesa_pedidos_disponibleHandle);
+
+		  }
+		  osDelay(200);
+	  }
+  /* USER CODE END cajero */
+}
+
+/* USER CODE BEGIN Header_cliente */
+/**
+* @brief Function implementing the clienteTask thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_cliente */
+void cliente(void const * argument)
+{
+  /* USER CODE BEGIN cliente */
+	char *proceso_actual = "Pedido del cliente\r\n";
+  /* Infinite loop */
+	  for(;;)
+	  {
+
+		  if(run_second_exercise && !HAL_GPIO_ReadPin(BTN_EXT0_GPIO_Port, BTN_EXT0_Pin)){
+				  // ---------------------------------------------------------------------------------------
+
+
+				  osSemaphoreWait(binarySem_uartHandle, osWaitForever);					// p(sem)
+				  HAL_UART_Transmit(&huart1, (uint8_t *) proceso_actual, strlen(proceso_actual), 1000);
+				  osSemaphoreRelease(binarySem_uartHandle);								// v(sem)
+
+
+				  // ---------------------------------------------------------------------------------------
+
+				  osSemaphoreRelease(binarySem_ordenHandle);								// v(sem)
+		  }
+		  osDelay(200);
+	  }
+  /* USER CODE END cliente */
 }
 
 /**

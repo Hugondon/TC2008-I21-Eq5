@@ -2,16 +2,16 @@
 main(){
     
     /* Semáforos. */
-    InitSemaphore(S_mesa_pedidos_disponible, 1);        //
-    InitSemaphore(S_mesa_hamburguesas_disponible, 1);   //
-    InitSemaphore(S_mesa_ordenes_disponible, 1);        //
+    InitSemaphore(binarySem_mesa_pedidos_disponible, 1);        //
+    InitSemaphore(binarySem_mesa_hamburguesas_disponible, 1);   //
+    InitSemaphore(binarySem_mesa_ordenes_disponible, 1);        //
 
-    InitSemaphore(S_mesa_pedidos_ocupada, 0);           //
-    InitSemaphore(S_mesa_hamburguesas_ocupada, 0);      //
-    InitSemaphore(S_mesa_ordenes_ocupada, 0);           //
+    InitSemaphore(binarySem_mesa_pedidos_ocupada, 0);           //
+    InitSemaphore(binarySem_mesa_hamburguesas_ocupada, 0);      //
+    InitSemaphore(binarySem_mesa_ordenes_ocupada, 0);           //
 
-    InitSemaphore(S_orden, 0);                          //
-    InitSemaphore(S_cocinar_hamburguesas, 0);           //
+    InitSemaphore(binarySem_orden, 0);                          //
+    InitSemaphore(binarySem_cocinar_hamburguesas, 0);           //
 
     /* Ejec. Concurr. */
     Parbegin{
