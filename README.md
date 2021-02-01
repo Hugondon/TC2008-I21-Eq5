@@ -11,7 +11,7 @@
 ## Tareas
 - [X] Pseudocódigo Ejercicios de Clase (7 y 8)
 - [ ] Pseudocódigo Ejercicio Propuesto
-- [ ] Implementación ejercicios de Clase (7 y 8)
+- [X] Implementación ejercicios de Clase (7 y 8)
 - [ ] Implementación ejercicio Propuesto
 - [ ] Manual de instalación/explicación
 - [ ] Video demostrativo
