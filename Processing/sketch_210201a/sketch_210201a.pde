@@ -34,9 +34,26 @@ void draw() {
     int inByte = myPort.read();
     println(inByte);
   }*/
-  if()
+ 
+ 
 }
 
+
+void mouseClicked(){
+  //faltan las posiciones de los botones
+  //problema 7
+  if(mouseX > && mouseX < && mouseY < && mouseY < ){
+    //manda el caracter 1 al micro para indicar que se corra el problema 7
+    myPort.write(49);
+    while(myPort.available()){
+      String s;
+      String buffer = myPort.readString();
+      s = concant(s, buffer);
+      text(s, 10, 10, 500, 500);
+      
+    }
+  }
+}
 void serialEvent(Serial p){
-  if()
+  
 }
