@@ -1,9 +1,9 @@
 #MicroXplorer Configuration settings - do not modify
-FREERTOS.BinarySemaphores01=myBinarySem01,Dynamic,NULL
+FREERTOS.BinarySemaphores01=binarySem_uart,Dynamic,NULL;binarySem_ejercicio_siete,Dynamic,NULL;binarySem_ejercicio_ocho,Dynamic,NULL;binarySem_ejercicio_propuesto,Dynamic,NULL
 FREERTOS.CountingSemaphores01=Sem_disponibles,2,Dynamic,NULL;Sem_ocupados,1,Dynamic,NULL
 FREERTOS.FootprintOK=true
 FREERTOS.IPParameters=Tasks01,configUSE_COUNTING_SEMAPHORES,FootprintOK,CountingSemaphores01,BinarySemaphores01
-FREERTOS.Tasks01=produceTask,0,128,produce,Default,NULL,Dynamic,NULL,NULL;consumeTask,0,128,consume,Default,NULL,Dynamic,NULL,NULL
+FREERTOS.Tasks01=produceTask,0,128,produce,Default,NULL,Dynamic,NULL,NULL;consumeTask,0,128,consume,Default,NULL,Dynamic,NULL,NULL;menuTask,1,128,menu,Default,NULL,Dynamic,NULL,NULL
 FREERTOS.configUSE_COUNTING_SEMAPHORES=1
 File.Version=6
 GPIO.groupedBy=Group By Peripherals

@@ -20,10 +20,10 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "cmsis_os.h"
-
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include <stdbool.h>
+#include <string.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -45,11 +45,15 @@ UART_HandleTypeDef huart1;
 
 osThreadId produceTaskHandle;
 osThreadId consumeTaskHandle;
-osSemaphoreId myBinarySem01Handle;
+osThreadId menuTaskHandle;
+osSemaphoreId binarySem_uartHandle;
+osSemaphoreId binarySem_ejercicio_sieteHandle;
+osSemaphoreId binarySem_ejercicio_ochoHandle;
+osSemaphoreId binarySem_ejercicio_propuestoHandle;
 osSemaphoreId Sem_disponiblesHandle;
 osSemaphoreId Sem_ocupadosHandle;
 /* USER CODE BEGIN PV */
-
+bool run_first_exercise = false, run_second_exercise = false, run_our_exercise = false;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -58,6 +62,7 @@ static void MX_GPIO_Init(void);
 static void MX_USART1_UART_Init(void);
 void produce(void const * argument);
 void consume(void const * argument);
+void menu(void const * argument);
 
 /* USER CODE BEGIN PFP */
 
@@ -65,10 +70,7 @@ void consume(void const * argument);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-int __io_putchar(int ch){
-	HAL_UART_Transmit(&huart1, &ch, 1, 10);
-	return 1;
-}
+
 /* USER CODE END 0 */
 
 /**
@@ -109,9 +111,21 @@ int main(void)
   /* USER CODE END RTOS_MUTEX */
 
   /* Create the semaphores(s) */
-  /* definition and creation of myBinarySem01 */
-  osSemaphoreDef(myBinarySem01);
-  myBinarySem01Handle = osSemaphoreCreate(osSemaphore(myBinarySem01), 1);
+  /* definition and creation of binarySem_uart */
+  osSemaphoreDef(binarySem_uart);
+  binarySem_uartHandle = osSemaphoreCreate(osSemaphore(binarySem_uart), 1);
+
+  /* definition and creation of binarySem_ejercicio_siete */
+  osSemaphoreDef(binarySem_ejercicio_siete);
+  binarySem_ejercicio_sieteHandle = osSemaphoreCreate(osSemaphore(binarySem_ejercicio_siete), 1);
+
+  /* definition and creation of binarySem_ejercicio_ocho */
+  osSemaphoreDef(binarySem_ejercicio_ocho);
+  binarySem_ejercicio_ochoHandle = osSemaphoreCreate(osSemaphore(binarySem_ejercicio_ocho), 1);
+
+  /* definition and creation of binarySem_ejercicio_propuesto */
+  osSemaphoreDef(binarySem_ejercicio_propuesto);
+  binarySem_ejercicio_propuestoHandle = osSemaphoreCreate(osSemaphore(binarySem_ejercicio_propuesto), 1);
 
   /* definition and creation of Sem_disponibles */
   osSemaphoreDef(Sem_disponibles);
@@ -141,6 +155,10 @@ int main(void)
   /* definition and creation of consumeTask */
   osThreadDef(consumeTask, consume, osPriorityNormal, 0, 128);
   consumeTaskHandle = osThreadCreate(osThread(consumeTask), NULL);
+
+  /* definition and creation of menuTask */
+  osThreadDef(menuTask, menu, osPriorityAboveNormal, 0, 128);
+  menuTaskHandle = osThreadCreate(osThread(menuTask), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -300,18 +318,18 @@ static void MX_GPIO_Init(void)
 void produce(void const * argument)
 {
   /* USER CODE BEGIN 5 */
-	char msg[32];
-	uint8_t msg_size, cnt=0;
+	char *proceso_actual = "Hello from produce\r\n";
   /* Infinite loop */
   for(;;)
   {
-	  msg_size = sprintf(msg, "Hello from produce, Count: %d\r\n", cnt);
+	  // osSemaphoreWait(binarySem_ejercicio_sieteHandle, osWaitForever);
+	  if(run_first_exercise){
 	  HAL_GPIO_TogglePin(LED_BUILTIN_GPIO_Port, LED_BUILTIN_Pin);
-	  osSemaphoreWait(myBinarySem01Handle, osWaitForever);
-	  HAL_UART_Transmit(&huart1, &msg, msg_size, 1000);
-	  osSemaphoreRelease(myBinarySem01Handle);
-	  cnt++;
+	  osSemaphoreWait(binarySem_uartHandle, osWaitForever);
+	  HAL_UART_Transmit(&huart1, (uint8_t *) proceso_actual, strlen(proceso_actual), 1000);
+	  osSemaphoreRelease(binarySem_uartHandle);
 	  osDelay(500);
+	  }
   }
   /* USER CODE END 5 */
 }
@@ -326,36 +344,81 @@ void produce(void const * argument)
 void consume(void const * argument)
 {
   /* USER CODE BEGIN consume */
-	char msg[32];
-	uint8_t msg_size, cnt=0;
+	char *proceso_actual = "Hello from consume\r\n";
   /* Infinite loop */
 	  for(;;)
 	  {
-		  msg_size = sprintf(msg, "Hello from consume, Count: %d\r\n", cnt);
-		  osSemaphoreWait(myBinarySem01Handle, osWaitForever);
-		  HAL_UART_Transmit(&huart1, &msg, msg_size, 1000);
-		  osSemaphoreRelease(myBinarySem01Handle);
-		  cnt++;
-		  if(!HAL_GPIO_ReadPin(BTN_EXT0_GPIO_Port, BTN_EXT0_Pin)){
-			  HAL_GPIO_TogglePin(LED_EXT0_GPIO_Port, LED_EXT0_Pin);
+		  // osSemaphoreWait(binarySem_ejercicio_sieteHandle, osWaitForever);
+		  if(run_first_exercise){
+			  osSemaphoreWait(binarySem_uartHandle, osWaitForever);
+			  HAL_UART_Transmit(&huart1, (uint8_t *) proceso_actual, strlen(proceso_actual), 1000);
+			  osSemaphoreRelease(binarySem_uartHandle);
+
+			  if(!HAL_GPIO_ReadPin(BTN_EXT0_GPIO_Port, BTN_EXT0_Pin)){
+				  HAL_GPIO_TogglePin(LED_EXT0_GPIO_Port, LED_EXT0_Pin);
+			  }
+			  if(!HAL_GPIO_ReadPin(BTN_EXT1_GPIO_Port, BTN_EXT1_Pin)){
+				  HAL_GPIO_TogglePin(LED_EXT1_GPIO_Port, LED_EXT1_Pin);
+			  }
+			  osDelay(250);
 		  }
-		  if(!HAL_GPIO_ReadPin(BTN_EXT1_GPIO_Port, BTN_EXT1_Pin)){
-			  HAL_GPIO_TogglePin(LED_EXT1_GPIO_Port, LED_EXT1_Pin);
-		  }
-		  if(!HAL_GPIO_ReadPin(BTN_EXT2_GPIO_Port, BTN_EXT2_Pin)){
-			  HAL_GPIO_TogglePin(LED_EXT2_GPIO_Port, LED_EXT2_Pin);
-		  }
-		  if(!HAL_GPIO_ReadPin(BTN_EXT3_GPIO_Port, BTN_EXT3_Pin)){
-			  HAL_GPIO_TogglePin(LED_EXT3_GPIO_Port, LED_EXT3_Pin);
-			  HAL_GPIO_TogglePin(LED_EXT5_GPIO_Port, LED_EXT5_Pin);
-		  }
-		  if(!HAL_GPIO_ReadPin(BTN_EXT4_GPIO_Port, BTN_EXT4_Pin)){
-			  HAL_GPIO_TogglePin(LED_EXT4_GPIO_Port, LED_EXT4_Pin);
-			  HAL_GPIO_TogglePin(LED_EXT6_GPIO_Port, LED_EXT6_Pin);
-		  }
-		  osDelay(250);
 	  }
   /* USER CODE END consume */
+}
+
+/* USER CODE BEGIN Header_menu */
+/**
+* @brief Function implementing the menuTask thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_menu */
+void menu(void const * argument)
+{
+  /* USER CODE BEGIN menu */
+  /* Infinite loop */
+  for(;;)
+  {
+	  if(!HAL_GPIO_ReadPin(BTN_EXT2_GPIO_Port, BTN_EXT2_Pin)){
+		  // osSemaphoreRelease(binarySem_ejercicio_sieteHandle);
+
+		  /* Indicadores */
+		  HAL_GPIO_TogglePin(LED_EXT2_GPIO_Port, LED_EXT2_Pin);
+		  HAL_GPIO_WritePin(LED_EXT3_GPIO_Port, LED_EXT3_Pin, GPIO_PIN_RESET);
+		  HAL_GPIO_WritePin(LED_EXT4_GPIO_Port, LED_EXT4_Pin, GPIO_PIN_RESET);
+
+		  /* Banderas */
+		  run_first_exercise = !run_first_exercise;
+		  run_second_exercise = false;
+		  run_our_exercise = false;
+	  }
+	  if(!HAL_GPIO_ReadPin(BTN_EXT3_GPIO_Port, BTN_EXT3_Pin)){
+
+		  /* Indicadores */
+		  HAL_GPIO_WritePin(LED_EXT2_GPIO_Port, LED_EXT2_Pin, GPIO_PIN_RESET);
+		  HAL_GPIO_TogglePin(LED_EXT3_GPIO_Port, LED_EXT3_Pin);
+		  HAL_GPIO_WritePin(LED_EXT4_GPIO_Port, LED_EXT4_Pin, GPIO_PIN_RESET);
+
+		  /* Banderas */
+		  run_first_exercise = false;
+		  run_second_exercise = !run_second_exercise;
+		  run_our_exercise = false;
+	  }
+	  if(!HAL_GPIO_ReadPin(BTN_EXT4_GPIO_Port, BTN_EXT4_Pin)){
+
+		  /* Indicadores */
+		  HAL_GPIO_WritePin(LED_EXT2_GPIO_Port, LED_EXT2_Pin, GPIO_PIN_RESET);
+		  HAL_GPIO_WritePin(LED_EXT3_GPIO_Port, LED_EXT3_Pin, GPIO_PIN_RESET);
+		  HAL_GPIO_TogglePin(LED_EXT4_GPIO_Port, LED_EXT4_Pin);
+
+		  /* Banderas */
+		  run_first_exercise = false;
+		  run_second_exercise = false;
+		  run_our_exercise = !run_our_exercise;
+	  }
+	 osDelay(200);
+  }
+  /* USER CODE END menu */
 }
 
 /**
@@ -390,22 +453,5 @@ void Error_Handler(void)
 
   /* USER CODE END Error_Handler_Debug */
 }
-
-#ifdef  USE_FULL_ASSERT
-/**
-  * @brief  Reports the name of the source file and the source line number
-  *         where the assert_param error has occurred.
-  * @param  file: pointer to the source file name
-  * @param  line: assert_param error line source number
-  * @retval None
-  */
-void assert_failed(uint8_t *file, uint32_t line)
-{
-  /* USER CODE BEGIN 6 */
-  /* User can add his own implementation to report the file name and line number,
-     tex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
-  /* USER CODE END 6 */
-}
-#endif /* USE_FULL_ASSERT */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
