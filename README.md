@@ -5,7 +5,7 @@
 | David |  |  |
 | Jesús |  |  |
 | Job Hernández | A00571627 | [Jnhms](https://github.com/Jnhm) |
-| Nico |  |  |
+| Nico | A01704683 | [NicolasBecerraMachado](https://github.com/NicolasBecerraMachado) |
 | Hugo Pérez | A01337226 | [hugondon](https://github.com/Hugondon)  |
 ---
 ## Tareas
