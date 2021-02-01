@@ -20,6 +20,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "cmsis_os.h"
+
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include <stdbool.h>
@@ -137,6 +138,7 @@ int main(void)
 
   /* USER CODE BEGIN RTOS_SEMAPHORES */
   /* add semaphores, ... */
+  osSemaphoreWait(Sem_ocupadosHandle, osWaitForever);
   /* USER CODE END RTOS_SEMAPHORES */
 
   /* USER CODE BEGIN RTOS_TIMERS */
@@ -265,11 +267,11 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(LED_BUILTIN_GPIO_Port, LED_BUILTIN_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, LED_EXT6_Pin|LED_EXT5_Pin|LED_EXT4_Pin|LED_EXT3_Pin
-                          |LED_EXT1_Pin|LED_EXT0_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOB, LED_EXT7_Pin|LED_EXT6_Pin|LED_EXT5_Pin|LED_EXT4_Pin
+                          |LED_EXT2_Pin|LED_EXT1_Pin|LED_EXT0_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(LED_EXT2_GPIO_Port, LED_EXT2_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(LED_EXT3_GPIO_Port, LED_EXT3_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin : LED_BUILTIN_Pin */
   GPIO_InitStruct.Pin = LED_BUILTIN_Pin;
@@ -286,21 +288,21 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_PULLUP;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : LED_EXT6_Pin LED_EXT5_Pin LED_EXT4_Pin LED_EXT3_Pin
-                           LED_EXT1_Pin LED_EXT0_Pin */
-  GPIO_InitStruct.Pin = LED_EXT6_Pin|LED_EXT5_Pin|LED_EXT4_Pin|LED_EXT3_Pin
-                          |LED_EXT1_Pin|LED_EXT0_Pin;
+  /*Configure GPIO pins : LED_EXT7_Pin LED_EXT6_Pin LED_EXT5_Pin LED_EXT4_Pin
+                           LED_EXT2_Pin LED_EXT1_Pin LED_EXT0_Pin */
+  GPIO_InitStruct.Pin = LED_EXT7_Pin|LED_EXT6_Pin|LED_EXT5_Pin|LED_EXT4_Pin
+                          |LED_EXT2_Pin|LED_EXT1_Pin|LED_EXT0_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : LED_EXT2_Pin */
-  GPIO_InitStruct.Pin = LED_EXT2_Pin;
+  /*Configure GPIO pin : LED_EXT3_Pin */
+  GPIO_InitStruct.Pin = LED_EXT3_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(LED_EXT2_GPIO_Port, &GPIO_InitStruct);
+  HAL_GPIO_Init(LED_EXT3_GPIO_Port, &GPIO_InitStruct);
 
 }
 
@@ -318,17 +320,26 @@ static void MX_GPIO_Init(void)
 void produce(void const * argument)
 {
   /* USER CODE BEGIN 5 */
-	char *proceso_actual = "Hello from produce\r\n";
+	char *proceso_actual = "Produciendo\r\n";
   /* Infinite loop */
   for(;;)
   {
-	  // osSemaphoreWait(binarySem_ejercicio_sieteHandle, osWaitForever);
 	  if(run_first_exercise){
-	  HAL_GPIO_TogglePin(LED_BUILTIN_GPIO_Port, LED_BUILTIN_Pin);
-	  osSemaphoreWait(binarySem_uartHandle, osWaitForever);
-	  HAL_UART_Transmit(&huart1, (uint8_t *) proceso_actual, strlen(proceso_actual), 1000);
-	  osSemaphoreRelease(binarySem_uartHandle);
-	  osDelay(500);
+		  osSemaphoreWait(Sem_disponiblesHandle, osWaitForever);			// p(disponibles)
+
+		  // ---------------------------------------------------------------------------------------
+
+
+		  osSemaphoreWait(binarySem_uartHandle, osWaitForever);				// p(sem)
+		  HAL_UART_Transmit(&huart1, (uint8_t *) proceso_actual, strlen(proceso_actual), 1000);
+		  osSemaphoreRelease(binarySem_uartHandle);							// v(sem)
+
+
+		  // ---------------------------------------------------------------------------------------
+
+		  osSemaphoreRelease(Sem_ocupadosHandle);							// v(ocupados)
+
+		  osDelay(500);
 	  }
   }
   /* USER CODE END 5 */
@@ -344,23 +355,30 @@ void produce(void const * argument)
 void consume(void const * argument)
 {
   /* USER CODE BEGIN consume */
-	char *proceso_actual = "Hello from consume\r\n";
+	char *proceso_actual = "Consumiendo\r\n";
   /* Infinite loop */
 	  for(;;)
 	  {
-		  // osSemaphoreWait(binarySem_ejercicio_sieteHandle, osWaitForever);
-		  if(run_first_exercise){
-			  osSemaphoreWait(binarySem_uartHandle, osWaitForever);
-			  HAL_UART_Transmit(&huart1, (uint8_t *) proceso_actual, strlen(proceso_actual), 1000);
-			  osSemaphoreRelease(binarySem_uartHandle);
 
-			  if(!HAL_GPIO_ReadPin(BTN_EXT0_GPIO_Port, BTN_EXT0_Pin)){
-				  HAL_GPIO_TogglePin(LED_EXT0_GPIO_Port, LED_EXT0_Pin);
-			  }
-			  if(!HAL_GPIO_ReadPin(BTN_EXT1_GPIO_Port, BTN_EXT1_Pin)){
-				  HAL_GPIO_TogglePin(LED_EXT1_GPIO_Port, LED_EXT1_Pin);
-			  }
-			  osDelay(250);
+		  if(run_first_exercise){
+
+			  osSemaphoreWait(Sem_ocupadosHandle, osWaitForever);					// p(ocupados)
+			  osSemaphoreWait(Sem_ocupadosHandle, osWaitForever);					// p(ocupados)
+
+			  // ---------------------------------------------------------------------------------------
+
+
+			  osSemaphoreWait(binarySem_uartHandle, osWaitForever);					// p(sem)
+			  HAL_UART_Transmit(&huart1, (uint8_t *) proceso_actual, strlen(proceso_actual), 1000);
+			  osSemaphoreRelease(binarySem_uartHandle);								// v(sem)
+
+
+			  // ---------------------------------------------------------------------------------------
+
+			  osSemaphoreRelease(Sem_disponiblesHandle);							// v(disponibles)
+			  osSemaphoreRelease(Sem_disponiblesHandle);							// v(disponibles)
+
+			  osDelay(500);
 		  }
 	  }
   /* USER CODE END consume */
@@ -383,9 +401,9 @@ void menu(void const * argument)
 		  // osSemaphoreRelease(binarySem_ejercicio_sieteHandle);
 
 		  /* Indicadores */
-		  HAL_GPIO_TogglePin(LED_EXT2_GPIO_Port, LED_EXT2_Pin);
-		  HAL_GPIO_WritePin(LED_EXT3_GPIO_Port, LED_EXT3_Pin, GPIO_PIN_RESET);
-		  HAL_GPIO_WritePin(LED_EXT4_GPIO_Port, LED_EXT4_Pin, GPIO_PIN_RESET);
+		  HAL_GPIO_TogglePin(LED_EXT0_GPIO_Port, LED_EXT0_Pin);
+		  HAL_GPIO_WritePin(LED_EXT1_GPIO_Port, LED_EXT1_Pin, GPIO_PIN_RESET);
+		  HAL_GPIO_WritePin(LED_EXT2_GPIO_Port, LED_EXT2_Pin, GPIO_PIN_RESET);
 
 		  /* Banderas */
 		  run_first_exercise = !run_first_exercise;
@@ -395,9 +413,9 @@ void menu(void const * argument)
 	  if(!HAL_GPIO_ReadPin(BTN_EXT3_GPIO_Port, BTN_EXT3_Pin)){
 
 		  /* Indicadores */
+		  HAL_GPIO_WritePin(LED_EXT0_GPIO_Port, LED_EXT0_Pin, GPIO_PIN_RESET);
+		  HAL_GPIO_TogglePin(LED_EXT1_GPIO_Port, LED_EXT1_Pin);
 		  HAL_GPIO_WritePin(LED_EXT2_GPIO_Port, LED_EXT2_Pin, GPIO_PIN_RESET);
-		  HAL_GPIO_TogglePin(LED_EXT3_GPIO_Port, LED_EXT3_Pin);
-		  HAL_GPIO_WritePin(LED_EXT4_GPIO_Port, LED_EXT4_Pin, GPIO_PIN_RESET);
 
 		  /* Banderas */
 		  run_first_exercise = false;
@@ -407,10 +425,9 @@ void menu(void const * argument)
 	  if(!HAL_GPIO_ReadPin(BTN_EXT4_GPIO_Port, BTN_EXT4_Pin)){
 
 		  /* Indicadores */
-		  HAL_GPIO_WritePin(LED_EXT2_GPIO_Port, LED_EXT2_Pin, GPIO_PIN_RESET);
-		  HAL_GPIO_WritePin(LED_EXT3_GPIO_Port, LED_EXT3_Pin, GPIO_PIN_RESET);
-		  HAL_GPIO_TogglePin(LED_EXT4_GPIO_Port, LED_EXT4_Pin);
-
+		  HAL_GPIO_WritePin(LED_EXT0_GPIO_Port, LED_EXT0_Pin, GPIO_PIN_RESET);
+		  HAL_GPIO_WritePin(LED_EXT1_GPIO_Port, LED_EXT1_Pin, GPIO_PIN_RESET);
+		  HAL_GPIO_TogglePin(LED_EXT2_GPIO_Port, LED_EXT2_Pin);
 		  /* Banderas */
 		  run_first_exercise = false;
 		  run_second_exercise = false;
@@ -453,5 +470,22 @@ void Error_Handler(void)
 
   /* USER CODE END Error_Handler_Debug */
 }
+
+#ifdef  USE_FULL_ASSERT
+/**
+  * @brief  Reports the name of the source file and the source line number
+  *         where the assert_param error has occurred.
+  * @param  file: pointer to the source file name
+  * @param  line: assert_param error line source number
+  * @retval None
+  */
+void assert_failed(uint8_t *file, uint32_t line)
+{
+  /* USER CODE BEGIN 6 */
+  /* User can add his own implementation to report the file name and line number,
+     tex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
+  /* USER CODE END 6 */
+}
+#endif /* USE_FULL_ASSERT */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
