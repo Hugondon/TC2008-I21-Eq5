@@ -2,10 +2,10 @@
 ## Integrantes del Equipo 5
 | Nombre | Matrícula | Cuenta |
 | ----------- | ----------- | ----------- |
-| David |  |  |
+| David Gaona  | A01369337  |[Speedsterbear](https://github.com/Speedsterbear)  |
 | Jesús |  |  |
 | Job Hernández | A00571627 | [Jnhms](https://github.com/Jnhm) |
-| Nico | A01704683 | [NicolasBecerraMachado](https://github.com/NicolasBecerraMachado) |
+| Nico |  |  |
 | Hugo Pérez | A01337226 | [hugondon](https://github.com/Hugondon)  |
 ---
 ## Tareas
