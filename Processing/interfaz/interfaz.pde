@@ -1,35 +1,29 @@
 import processing.serial.*;
 
 Serial myPort;  // The serial port
-String receiveSerial;
-String printFlags;
+String receiveSerial, buffer_semaforos;
+PImage button1, bluepill;  // Declare a variable of type PImage
 
-PImage button1;  // Declare a variable of type PImage
+//  Cuántas veces se han ejecutado los procesos
+int produciendo, consumiendo, despachando_orden, empacador, cocinero, cajero, pedido_cliente;
 
-//variables off how many times a certain process has been executed
-int produciendo;
-int consumiendo;
-int despachando_orden;
-int empacador;
-int cocinero;
-int cajero;
-int pedido_cliente;
-
+// Posición en X para texto (buffer_semaforos)
+int posX;
 
 void setup() { //<>//
-  size(1024,1024);
-  //
-  //Serial port declaration
-  //
-  // List all the available serial ports
-  //printArray(Serial.list());
-  // Open the port you are using at the rate you want:
-  myPort = new Serial(this, "COM2", 115200, 'N', 8, 1);
-  //
-  //Images declarations
-  //
-  button1 = loadImage("bottones.png");
+  
+  // Inicialización ventana
+  size(1024,640);
+  
+  // Inicialización Puerto Serial 
+  myPort = new Serial(this, "COM5", 115200, 'N', 8, 1);
+  
+  // Imágenes
+  button1 = loadImage("button.png");
+  bluepill = loadImage("bluepill.png");
   button1.resize(128,128);
+  
+  // Valores iniciales
   produciendo = -1;
   consumiendo = -1;
   despachando_orden = -1;
@@ -37,29 +31,37 @@ void setup() { //<>//
   cocinero = -1;
   cajero = -1;
   pedido_cliente = -1;
-  printFlags = "";
+  buffer_semaforos = "";
 }
 
 void draw() {
-  textSize(32);
-  background(41,239,152);
-  text("problema 7",128,736);
-  text("problema 8",384,736);
-  text("problema propuesto",672,736);
-  image(button1,160,768);
-  image(button1,384,768);
-  image(button1,672+96,768);
+  fill(26, 2, 120);
+  background(133, 211, 242);
+  textSize(24);
   
+  text("Problema 7", 88, 186);
+  text("Problema 8", 388, 186);
+  text("Problema propuesto", 688, 186);
+  
+  image(button1,120,28);
+  image(button1,400,28);
+  image(button1,672+96,28);
+  image(bluepill, 312, 422);  
+  
+    
   if(despachando_orden != -1 || empacador  != -1 || cocinero  != -1 || cajero  != -1 || pedido_cliente != -1){
-     printFlags = String.format("despachando_orden = %d\nempacador = %d\ncocinero = %d\ncajero = %d\npedido_cliente = %d",despachando_orden,empacador,cocinero,cajero,pedido_cliente);
+    buffer_semaforos = String.format("Despachando orden = %d\nEmpacador = %d\nCocinero = %d\nCajero = %d\nPedido cliente = %d",despachando_orden,empacador,cocinero,cajero,pedido_cliente);
+    posX = 350;
   }
   else if(produciendo != -1 || consumiendo != -1){
-    printFlags = String.format("produciendo = %d\nconsumiendo = %d",produciendo,consumiendo);
+    buffer_semaforos = String.format("Produciendo = %d\nConsumiendo = %d",produciendo,consumiendo);
+    posX = 75;
   }
   else{
-    printFlags = String.format("");
+    buffer_semaforos = String.format("");
+    posX = 480;
   }
-  text(printFlags,0,64);
+  text(buffer_semaforos,posX,250);
 }
 
 void serialEvent(Serial p){
@@ -73,7 +75,7 @@ void serialEvent(Serial p){
     if(consumiendo == -1){
       consumiendo = 0;
     }
-    produciendo = produciendo + 1;
+    produciendo++;
     despachando_orden = -1;
     empacador = -1;
     cocinero = -1;
@@ -87,7 +89,7 @@ void serialEvent(Serial p){
     if(consumiendo == -1){
       consumiendo = 0;
     }
-    consumiendo = consumiendo + 1;
+    consumiendo++;
     despachando_orden = -1;
     empacador = -1;
     cocinero = -1;
@@ -192,7 +194,7 @@ void serialEvent(Serial p){
     }
     produciendo = -1;
     consumiendo = -1;
-    pedido_cliente = pedido_cliente + 1;
+    pedido_cliente++;
   }
   redraw();
 }

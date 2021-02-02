@@ -1,6 +1,6 @@
 #MicroXplorer Configuration settings - do not modify
 FREERTOS.BinarySemaphores01=binarySem_uart,Dynamic,NULL;binarySem_mesa_pedidos_disponible,Dynamic,NULL;binarySem_mesa_hamburguesas_disponible,Dynamic,NULL;binarySem_mesa_ordenes_disponible,Dynamic,NULL;binarySem_mesa_pedidos_ocupada,Dynamic,NULL;binarySem_mesa_hamburguesas_ocupada,Dynamic,NULL;binarySem_mesa_ordenes_ocupada,Dynamic,NULL;binarySem_orden,Dynamic,NULL;binarySem_cocinar_hamburguesas,Dynamic,NULL
-FREERTOS.CountingSemaphores01=Sem_lugares_ocupados,1,Dynamic,NULL;Sem_lugares_disponibles,2,Dynamic,NULL
+FREERTOS.CountingSemaphores01=Sem_lugares_ocupados,1,Dynamic,NULL;Sem_lugares_disponibles,2,Dynamic,NULL;Sem_lugares_mesa_hamburguesa,8,Dynamic,NULL
 FREERTOS.FootprintOK=false
 FREERTOS.IPParameters=Tasks01,configUSE_COUNTING_SEMAPHORES,FootprintOK,BinarySemaphores01,CountingSemaphores01,configTOTAL_HEAP_SIZE
 FREERTOS.Tasks01=produceTask,0,128,produce,Default,NULL,Dynamic,NULL,NULL;consumeTask,0,128,consume,Default,NULL,Dynamic,NULL,NULL;menuTask,1,128,menu,Default,NULL,Dynamic,NULL,NULL;despachadorTask,0,128,despachador,Default,NULL,Dynamic,NULL,NULL;empacadorTask,0,128,empacador,Default,NULL,Dynamic,NULL,NULL;cocineroTask,0,128,cocinero,Default,NULL,Dynamic,NULL,NULL;cajeroTask,0,128,cajero,Default,NULL,Dynamic,NULL,NULL;clienteTask,0,128,cliente,Default,NULL,Dynamic,NULL,NULL
@@ -177,3 +177,4 @@ VP_FREERTOS_VS_CMSIS_V1.Signal=FREERTOS_VS_CMSIS_V1
 VP_SYS_VS_tim1.Mode=TIM1
 VP_SYS_VS_tim1.Signal=SYS_VS_tim1
 board=custom
+isbadioc=false
