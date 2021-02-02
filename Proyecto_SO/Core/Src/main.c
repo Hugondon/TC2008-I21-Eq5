@@ -640,7 +640,7 @@ void cocinero(void const * argument)
 void cajero(void const * argument)
 {
   /* USER CODE BEGIN cajero */
-	char *proceso_actual = "Cajero. Disfruta tu McTrio\r\n";
+	char *proceso_actual = "Cajero\r\n";
   /* Infinite loop */
 	  for(;;)
 	  {
