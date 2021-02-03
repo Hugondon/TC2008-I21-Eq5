@@ -26,7 +26,7 @@
 - Sus recursos permiten llevar el concepto de múltiples threads y semáforos al mundo de los microcontroladores.
 - Su documentación se puede encontrar [aquí.](https://www.freertos.org/Documentation/RTOS_book.html)
 ### Bluepill
-![stm32f103-blue-pill](https://user-images.githubusercontent.com/47252665/106394767-ea8fd780-63c3-11eb-84fd-74fd53e39260.jpg)
+![bluepill](https://user-images.githubusercontent.com/47252665/106808503-1616fa00-6630-11eb-9476-e1eb82aeda74.png)
 - Tarjeta de desarrollo basada en el microcontrolador STM32F103C8T6. Se utilizará como plataforma para echar a andar un sistema con múltiples threads.
 - La datasheet del microcontrolador se puede encontrar [aquí.](https://www.st.com/en/microcontrollers-microprocessors/stm32f103c8.html#documentation)
 - El esquemático de la tarjeta se puede encontrar [aquí.](https://github.com/dhylands/stm32-test/blob/master/board-STM32F103-Mini/STM32F103C8T6-Schematic.pdf)
