@@ -70,6 +70,12 @@ void Error_Handler(void);
 #define BTN_EXT3_GPIO_Port GPIOA
 #define BTN_EXT4_Pin GPIO_PIN_4
 #define BTN_EXT4_GPIO_Port GPIOA
+#define CLK_Pin GPIO_PIN_5
+#define CLK_GPIO_Port GPIOA
+#define CS_Pin GPIO_PIN_6
+#define CS_GPIO_Port GPIOA
+#define DIN_Pin GPIO_PIN_7
+#define DIN_GPIO_Port GPIOA
 #define LED_EXT7_Pin GPIO_PIN_12
 #define LED_EXT7_GPIO_Port GPIOB
 #define LED_EXT6_Pin GPIO_PIN_13

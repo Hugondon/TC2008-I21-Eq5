@@ -35,7 +35,6 @@
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 #define DELAY 300
-#define TAMAÑO_MESA_HAMBURGUESA 8
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -44,6 +43,8 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
+TIM_HandleTypeDef htim2;
+
 UART_HandleTypeDef huart1;
 
 osThreadId produceTaskHandle;
@@ -54,6 +55,7 @@ osThreadId empacadorTaskHandle;
 osThreadId cocineroTaskHandle;
 osThreadId cajeroTaskHandle;
 osThreadId clienteTaskHandle;
+osThreadId printMatrixTaskHandle;
 osSemaphoreId binarySem_uartHandle;
 osSemaphoreId binarySem_mesa_pedidos_disponibleHandle;
 osSemaphoreId binarySem_mesa_hamburguesas_disponibleHandle;
@@ -63,17 +65,61 @@ osSemaphoreId binarySem_mesa_hamburguesas_ocupadaHandle;
 osSemaphoreId binarySem_mesa_ordenes_ocupadaHandle;
 osSemaphoreId binarySem_ordenHandle;
 osSemaphoreId binarySem_cocinar_hamburguesasHandle;
+osSemaphoreId binarySem_dos_segundosHandle;
 osSemaphoreId Sem_lugares_ocupadosHandle;
 osSemaphoreId Sem_lugares_disponiblesHandle;
 osSemaphoreId Sem_lugares_mesa_hamburguesaHandle;
 /* USER CODE BEGIN PV */
 bool run_first_exercise = false, run_second_exercise = false, run_our_exercise = false;
+uint8_t disp1ay[39][8]={
+{0b00000000,0b01111110,0b10000001,0b10000001,0b10000001,0b10000001,0b01111110,0b00000000},
+{0b00000000,0b10000000,0b10000100,0b10000010,0b11111111,0b10000000,0b10000000,0b00000000},
+{0b00000000,0b10000010,0b11000001,0b10100001,0b10010001,0b10001110,0b00000000,0b00000000},
+{0b00000000,0b10000001,0b10000001,0b10011001,0b10011001,0b10100101,0b01100110,0b00000000},
+{0b00010000,0b00011000,0b00010100,0b00010010,0b11111111,0b00010000,0b00010000,0b00000000},
+{0b00000000,0b10000001,0b10000111,0b10000101,0b10001001,0b11010001,0b01100001,0b00000000},
+{0b00000000,0b00000000,0b11111100,0b10010010,0b10010001,0b10010001,0b11110000,0b00000000},
+{0b00000000,0b00000000,0b00000011,0b00000001,0b11110001,0b00001001,0b00000111,0b00000000},
+{0b00000000,0b11000011,0b10100101,0b10011001,0b10011001,0b10100101,0b11000011,0b00000000},
+{0b00000000,0b00000000,0b10001111,0b10001001,0b01001001,0b00101001,0b00011111,0b00000000},
+{0x18,0x24,0x42,0x42,0x7E,0x42,0x42,0x42},//A
+{0x3C,0x22,0x22,0x3c,0x22,0x22,0x3C,0x0},//B
+{0x3C,0x40,0x40,0x40,0x40,0x40,0x40,0x3C},//C
+{0x7C,0x22,0x22,0x22,0x22,0x22,0x22,0x7C},//D
+{0x7C,0x40,0x40,0x7C,0x40,0x40,0x40,0x7C},//E
+{0x7C,0x40,0x40,0x7C,0x40,0x40,0x40,0x40},//F
+{0x3C,0x40,0x40,0x40,0x4c,0x44,0x44,0x3C},//G
+{0x44,0x44,0x44,0x7C,0x44,0x44,0x44,0x44},//H
+{0x7C,0x10,0x10,0x10,0x10,0x10,0x10,0x7C},//I
+{0x3C,0x8,0x8,0x8,0x8,0x8,0x48,0x30},//J
+{0x0,0x24,0x28,0x30,0x20,0x30,0x28,0x24},//K
+{0x40,0x40,0x40,0x40,0x40,0x40,0x40,0x7C},//L
+{0x81,0xC3,0xA5,0x99,0x81,0x81,0x81,0x81},//M
+{0x0,0x42,0x62,0x52,0x4A,0x46,0x42,0x0},//N
+{0x3C,0x42,0x42,0x42,0x42,0x42,0x42,0x3C},//O
+{0x3C,0x22,0x22,0x22,0x3C,0x20,0x20,0x20},//P
+{0x1C,0x22,0x22,0x22,0x22,0x26,0x22,0x1D},//Q
+{0x3C,0x22,0x22,0x22,0x3C,0x24,0x22,0x21},//R
+{0x0,0x1E,0x20,0x20,0x3E,0x2,0x2,0x3C},//S
+{0x0,0x3E,0x8,0x8,0x8,0x8,0x8,0x8},//T
+{0x42,0x42,0x42,0x42,0x42,0x42,0x22,0x1C},//U
+{0x42,0x42,0x42,0x42,0x42,0x42,0x24,0x18},//V
+{0x0,0x49,0x49,0x49,0x49,0x2A,0x1C,0x0},//W
+{0x0,0x41,0x22,0x14,0x8,0x14,0x22,0x41},//X
+{0x41,0x22,0x14,0x8,0x8,0x8,0x8,0x8},//Y
+{0x0,0x7F,0x2,0x4,0x8,0x10,0x20,0x7F},//Z
+{0b00000000,0b00100110,0b00101010,0b00110010,0b00000000,0b00111110,0b00100010,0b00111110},	// SO
+{0b00000000,0b00111110,0b00001010,0b00001110,0b00000000,0b00000010,0b00111010,0b00000110},	// P7
+{0b00000000,0b00111110,0b00001010,0b00001110,0b00000000,0b00111110,0b00101010,0b00111110},	// P8
+};
+uint16_t timer_cnt = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART1_UART_Init(void);
+static void MX_TIM2_Init(void);
 void produce(void const * argument);
 void consume(void const * argument);
 void menu(void const * argument);
@@ -82,9 +128,13 @@ void empacador(void const * argument);
 void cocinero(void const * argument);
 void cajero(void const * argument);
 void cliente(void const * argument);
+void printMatrix(void const * argument);
 
 /* USER CODE BEGIN PFP */
-
+void write_byte(uint8_t byte);
+void write_max(uint8_t address, uint8_t data);
+void max_init(void);
+void write_string (char *str);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -121,8 +171,8 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_USART1_UART_Init();
+  MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
-
   /* USER CODE END 2 */
 
   /* USER CODE BEGIN RTOS_MUTEX */
@@ -166,6 +216,10 @@ int main(void)
   osSemaphoreDef(binarySem_cocinar_hamburguesas);
   binarySem_cocinar_hamburguesasHandle = osSemaphoreCreate(osSemaphore(binarySem_cocinar_hamburguesas), 1);
 
+  /* definition and creation of binarySem_dos_segundos */
+  osSemaphoreDef(binarySem_dos_segundos);
+  binarySem_dos_segundosHandle = osSemaphoreCreate(osSemaphore(binarySem_dos_segundos), 1);
+
   /* definition and creation of Sem_lugares_ocupados */
   osSemaphoreDef(Sem_lugares_ocupados);
   Sem_lugares_ocupadosHandle = osSemaphoreCreate(osSemaphore(Sem_lugares_ocupados), 1);
@@ -192,7 +246,9 @@ int main(void)
   osSemaphoreWait(binarySem_cocinar_hamburguesasHandle, osWaitForever);
 
   // Ejercicio propuesto
-
+  max_init();
+  for(int i=1; i<9; i++) write_max(i, disp1ay[36][i-1]);
+  osSemaphoreWait(binarySem_dos_segundosHandle, osWaitForever);
   /* USER CODE END RTOS_SEMAPHORES */
 
   /* USER CODE BEGIN RTOS_TIMERS */
@@ -213,7 +269,7 @@ int main(void)
   consumeTaskHandle = osThreadCreate(osThread(consumeTask), NULL);
 
   /* definition and creation of menuTask */
-  osThreadDef(menuTask, menu, osPriorityAboveNormal, 0, 128);
+  osThreadDef(menuTask, menu, osPriorityHigh, 0, 128);
   menuTaskHandle = osThreadCreate(osThread(menuTask), NULL);
 
   /* definition and creation of despachadorTask */
@@ -235,6 +291,10 @@ int main(void)
   /* definition and creation of clienteTask */
   osThreadDef(clienteTask, cliente, osPriorityNormal, 0, 128);
   clienteTaskHandle = osThreadCreate(osThread(clienteTask), NULL);
+
+  /* definition and creation of printMatrixTask */
+  osThreadDef(printMatrixTask, printMatrix, osPriorityAboveNormal, 0, 128);
+  printMatrixTaskHandle = osThreadCreate(osThread(printMatrixTask), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -291,6 +351,51 @@ void SystemClock_Config(void)
 }
 
 /**
+  * @brief TIM2 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_TIM2_Init(void)
+{
+
+  /* USER CODE BEGIN TIM2_Init 0 */
+
+  /* USER CODE END TIM2_Init 0 */
+
+  TIM_ClockConfigTypeDef sClockSourceConfig = {0};
+  TIM_MasterConfigTypeDef sMasterConfig = {0};
+
+  /* USER CODE BEGIN TIM2_Init 1 */
+
+  /* USER CODE END TIM2_Init 1 */
+  htim2.Instance = TIM2;
+  htim2.Init.Prescaler = 1000-1;
+  htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim2.Init.Period = 800-1;
+  htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;
+  if (HAL_TIM_Base_Init(&htim2) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
+  if (HAL_TIM_ConfigClockSource(&htim2, &sClockSourceConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+  if (HAL_TIMEx_MasterConfigSynchronization(&htim2, &sMasterConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN TIM2_Init 2 */
+
+  /* USER CODE END TIM2_Init 2 */
+
+}
+
+/**
   * @brief USART1 Initialization Function
   * @param None
   * @retval None
@@ -341,11 +446,11 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(LED_BUILTIN_GPIO_Port, LED_BUILTIN_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, LED_EXT7_Pin|LED_EXT6_Pin|LED_EXT5_Pin|LED_EXT4_Pin
-                          |LED_EXT1_Pin|LED_EXT0_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, CLK_Pin|CS_Pin|DIN_Pin|LED_EXT3_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(LED_EXT3_GPIO_Port, LED_EXT3_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOB, LED_EXT7_Pin|LED_EXT6_Pin|LED_EXT5_Pin|LED_EXT4_Pin
+                          |LED_EXT1_Pin|LED_EXT0_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin : LED_BUILTIN_Pin */
   GPIO_InitStruct.Pin = LED_BUILTIN_Pin;
@@ -362,6 +467,13 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_PULLUP;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
+  /*Configure GPIO pins : CLK_Pin CS_Pin DIN_Pin LED_EXT3_Pin */
+  GPIO_InitStruct.Pin = CLK_Pin|CS_Pin|DIN_Pin|LED_EXT3_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
   /*Configure GPIO pins : LED_EXT7_Pin LED_EXT6_Pin LED_EXT5_Pin LED_EXT4_Pin
                            LED_EXT1_Pin LED_EXT0_Pin */
   GPIO_InitStruct.Pin = LED_EXT7_Pin|LED_EXT6_Pin|LED_EXT5_Pin|LED_EXT4_Pin
@@ -370,13 +482,6 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
-
-  /*Configure GPIO pin : LED_EXT3_Pin */
-  GPIO_InitStruct.Pin = LED_EXT3_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(LED_EXT3_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pin : LED_EXT2_Pin */
   GPIO_InitStruct.Pin = LED_EXT2_Pin;
@@ -387,7 +492,34 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-
+void write_byte(uint8_t byte){
+	for(int i=0;i<8;i++){
+		 HAL_GPIO_WritePin(CLK_GPIO_Port, CLK_Pin, 0);  			// Pull the CLK LOW
+		 HAL_GPIO_WritePin(DIN_GPIO_Port, DIN_Pin, byte&0x80);		// Write one BIT data MSB first
+		 byte = byte<<1;  											// Shift the data to the left
+		 HAL_GPIO_WritePin(CLK_GPIO_Port, CLK_Pin, 1);  			// Pull the CLK HIGH
+	   }
+}
+void write_max(uint8_t address, uint8_t data){
+	HAL_GPIO_WritePin(CS_GPIO_Port, CS_Pin, 0);   					// Pull the CS pin LOW
+	write_byte(address);   											// Write address
+	write_byte(data);  												// Write data
+	HAL_GPIO_WritePin(CS_GPIO_Port, CS_Pin, 1);  					// Pull the CS HIGH
+}
+void max_init(void){
+	write_max(0x09, 0x00);       									//  no decoding
+	write_max(0x0a, 0x00);       									//  brightness intensity
+	write_max(0x0b, 0x07);       									//  scan limit = 8 LEDs
+	write_max(0x0c, 0x01);       									//  power down =0，normal mode = 1
+	write_max(0x0f, 0x00);      									//  no test display
+}
+void write_string(char *str){
+	while (*str){
+		for(int i=1;i<9;i++) write_max(i,disp1ay[(*str - 55)][i-1]);
+		*str++;
+		osDelay(400);
+	}
+}
 /* USER CODE END 4 */
 
 /* USER CODE BEGIN Header_produce */
@@ -490,6 +622,8 @@ void menu(void const * argument)
 		  run_first_exercise = !run_first_exercise;
 		  run_second_exercise = false;
 		  run_our_exercise = false;
+
+		  for(int i=1; i<9; i++) write_max(i, disp1ay[37][i-1]);
 	  }
 	  if(!HAL_GPIO_ReadPin(BTN_EXT3_GPIO_Port, BTN_EXT3_Pin)){
 		  // 2
@@ -503,6 +637,8 @@ void menu(void const * argument)
 		  run_first_exercise = false;
 		  run_second_exercise = !run_second_exercise;
 		  run_our_exercise = false;
+
+		  for(int i=1; i<9; i++) write_max(i, disp1ay[38][i-1]);
 	  }
 	  if(!HAL_GPIO_ReadPin(BTN_EXT4_GPIO_Port, BTN_EXT4_Pin)){
 		  // 3
@@ -512,10 +648,15 @@ void menu(void const * argument)
 		  HAL_GPIO_WritePin(LED_EXT1_GPIO_Port, LED_EXT1_Pin, GPIO_PIN_RESET);
 		  HAL_GPIO_TogglePin(LED_EXT2_GPIO_Port, LED_EXT2_Pin);
 		  HAL_GPIO_TogglePin(LED_BUILTIN_GPIO_Port, LED_BUILTIN_Pin);
+
 		  /* Banderas */
 		  run_first_exercise = false;
 		  run_second_exercise = false;
 		  run_our_exercise = !run_our_exercise;
+
+		  /* Timer */
+		  HAL_TIM_Base_Start_IT(&htim2);
+		  // HAL_TIM_Base_Stop_IT(&htim2);
 	  }
 	 osDelay(200);
   }
@@ -701,6 +842,34 @@ void cliente(void const * argument)
   /* USER CODE END cliente */
 }
 
+/* USER CODE BEGIN Header_printMatrix */
+/**
+* @brief Function implementing the printMatrixTask thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_printMatrix */
+void printMatrix(void const * argument)
+{
+  /* USER CODE BEGIN printMatrix */
+	uint8_t matrix_cnt = 9;
+  /* Infinite loop */
+  for(;;)
+  {
+	  if(run_our_exercise){
+		  osSemaphoreWait(binarySem_dos_segundosHandle, osWaitForever);
+		  for(int i=1; i<9; i++) write_max(i, disp1ay[matrix_cnt][i-1]);
+		  matrix_cnt = (matrix_cnt > 0 ? matrix_cnt-1 : 9);
+		  osDelay(300);
+		  // write_string("JOTO");
+
+	  }else{
+		osDelay(400);
+	  }
+  }
+  /* USER CODE END printMatrix */
+}
+
 /**
   * @brief  Period elapsed callback in non blocking mode
   * @note   This function is called  when TIM1 interrupt took place, inside
@@ -718,7 +887,13 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
     HAL_IncTick();
   }
   /* USER CODE BEGIN Callback 1 */
-
+  if ( htim->Instance == TIM2 ){
+    timer_cnt++;
+    if(timer_cnt == 2){
+    	osSemaphoreRelease(binarySem_dos_segundosHandle);
+    	timer_cnt=0;
+    }
+  }
   /* USER CODE END Callback 1 */
 }
 
