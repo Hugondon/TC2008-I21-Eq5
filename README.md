@@ -30,3 +30,5 @@
 - Tarjeta de desarrollo basada en el microcontrolador STM32F103C8T6. Se utilizará como plataforma para echar a andar un sistema con múltiples threads.
 - La datasheet del microcontrolador se puede encontrar [aquí.](https://www.st.com/en/microcontrollers-microprocessors/stm32f103c8.html#documentation)
 - El esquemático de la tarjeta se puede encontrar [aquí.](https://github.com/dhylands/stm32-test/blob/master/board-STM32F103-Mini/STM32F103C8T6-Schematic.pdf)
+### Processing
+![processing_img](https://user-images.githubusercontent.com/47252665/106808357-e7991f00-662f-11eb-8038-75ab7a09e618.png)
