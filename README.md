@@ -10,11 +10,11 @@
 ---
 ## Tareas
 - [X] Pseudocódigo Ejercicios de Clase (7 y 8)
-- [ ] Pseudocódigo Ejercicio Propuesto
+- [X] Pseudocódigo Ejercicio Propuesto
 - [X] Implementación ejercicios de Clase (7 y 8)
-- [ ] Implementación ejercicio Propuesto
+- [X] Implementación ejercicio Propuesto
 - [X] Manual de instalación/explicación
-- [ ] Video demostrativo
+- [X] Video demostrativo
 ---
 ## Herramientas utilizadas
 Instalar las siguientes herramientas a la discreción y neesidad del usuario.
@@ -80,4 +80,6 @@ Una vez que jungla y bot estén disponibles y hayan despejado el área, el drag�
 
 Después de asegurarlo, ambos personajes dejarán de estar disponibles. 
 El dragón volverá a estar en la Grieta del Invocador después de los reglamentarios 6 minutos de haber sido derrotado.
+---
+## Video Demostrativo
 
