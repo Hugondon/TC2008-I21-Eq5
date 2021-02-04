@@ -16,6 +16,18 @@
 - [ ] Manual de instalación/explicación
 - [ ] Video demostrativo
 ---
+## Problema propuesto
+- Para derrotar al dragón de la Grieta del Invocador en el famosísimo League of Legends,
+  es necesario que el jugador en jungla esté disponible para asegurarlo (BOTONAZO).
+  Tendrá que llamar a bot (a través de un ping de ayuda) para así ayudar a completar el objetivo.
+   
+  De igual forma, para asegurar este objetivo es necesario que el área cerca del dragón esté
+  despejada y esta solamente se encuentra en ese estado al estar jungla y bot ahí por 2 minutos.
+
+  Una vez que jungla y bot estén disponibles y hayan despejado el área, el dragón podrá ser asegurado.
+
+  Después de asegurarlo, ambos personajes dejarán de estar disponibles. 
+  El dragón volverá a estar en la Grieta del Invocador después de los reglamentarios 6 minutos de haber sido derrotado.
 ## Herramientas utilizadas
 Instalar las siguientes herramientas a la discreción y neesidad del usuario.
 ### STM32CubeIDE
@@ -35,12 +47,12 @@ Instalar las siguientes herramientas a la discreción y neesidad del usuario.
 ![processing_img](https://user-images.githubusercontent.com/47252665/106808357-e7991f00-662f-11eb-8038-75ab7a09e618.png)
 - IDE basada en java que permite crear diferentes aplicaciones gráficas.
 - De igual manera permite interactuar con puertos seriales, por lo cuál es perfecta para crear interfaces para microcontroladores.
-- Descargar en : https://processing.org/download/
+- Descargar en : [aquí](https://processing.org/download/)
 ### Eltima Virtual PORT
 ![ELTIMA img](https://www.eltima.com/imgnew/products/product-info/i-win/winLargeVspdIcon@2x.png)
 - Esta herramienta permite crear y enlazar puertos virtuales.
 - Esta herramienta es excelente para probar los puertos seriales y así no tener la necesidad de utilizar un microcontrolador, aunque  en este caso nosotro si utilizamos uno.
-- Descargar en :  https://www.eltima.com/vspd-post-download.html
+- Descargar en : [link](https://www.eltima.com/vspd-post-download.html)
 
 ## Manual de Usuario
 - Conectar el microcontrolador programado a uno de los puertos USB de la computadora.
