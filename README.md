@@ -28,6 +28,7 @@
 
   Después de asegurarlo, ambos personajes dejarán de estar disponibles. 
   El dragón volverá a estar en la Grieta del Invocador después de los reglamentarios 6 minutos de haber sido derrotado.
+- Este problema esta inspirado en las mecanicas del famoso juego multijugador LOL, donde la sincronización de los jugadores es clave para conseguir la victoria.
 ## Herramientas utilizadas
 Instalar las siguientes herramientas a la discreción y neesidad del usuario.
 ### STM32CubeIDE
