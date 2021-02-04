@@ -19,19 +19,39 @@ main(){
     /* Semáforos */
     InitSemaphore(Sem_jungla_disponible, 0);        // Jungla está disponible
     InitSemaphore(Sem_bot_disponible, 0);           // Bot está disponible
-    InitSemaphore(Sem_zona_asegurada, 0);           // Pasaron 2 minutos
-
-    InitSemaphore(Sem_dragon_disponible, 0);        // Dragón está disponible
 
     /* Banderas */
+    bool zona_asegurada = false;
+    bool dragon_disponible = true;
 
     /* Ejec. Concurr. */
     Parbegin{
-        
+        pedir_ayuda;
+        asegurar_zona;
+        matar_dragon;
     }
 } 
 
 /* Procesos */
-Procedure EntraEstudiante1{
-    
+
+Procedure pedir_ayuda{
+
+    // Esperar botonazo
+    V(Sem_jungla_disponible);
+    V(Sem_bot_disponible);
+
+}
+
+Procedure asegurar_zona{
+    P(Sem_jungla_disponible);
+    P(Sem_bot_disponible);
+    // Iniciar Timer
+
+}
+
+Procedure matar_dragon{
+    if(zona_asegurada){
+        // Matar
+    }
+    // Iniciar Timer
 }
