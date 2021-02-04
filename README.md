@@ -84,4 +84,4 @@ El dragón volverá a estar en la Grieta del Invocador después de los reglament
 ---
 ## Video Demostrativo
 
-![Link al video])https://drive.google.com/drive/folders/1qpY7V7M-YAX1ldKsQ7_L6k8iIiCXulyH?usp=sharing)
+![Link al video](https://drive.google.com/drive/folders/1qpY7V7M-YAX1ldKsQ7_L6k8iIiCXulyH?usp=sharing)
