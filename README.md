@@ -80,6 +80,7 @@ Una vez que jungla y bot estén disponibles y hayan despejado el área, el drag�
 
 Después de asegurarlo, ambos personajes dejarán de estar disponibles. 
 El dragón volverá a estar en la Grieta del Invocador después de los reglamentarios 6 minutos de haber sido derrotado.
+
 ---
 ## Video Demostrativo
 
