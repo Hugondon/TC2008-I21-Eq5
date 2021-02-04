@@ -47,4 +47,5 @@ Instalar las siguientes herramientas a la discreción y neesidad del usuario.
 - Modificar la línea 19 del codigo de processing a:    
 myPort = new Serial(this, puerto conectado al micro , 115200, 'N', 8, 1);   
 donde puerto conectado al micro se tiene que reemplazar por "puerto conectado al micro".
-
+- Correr el programa de Processing.
+- Utilizar los push buttons del microcontrolador para alternar entre problemas.
