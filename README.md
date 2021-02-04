@@ -35,7 +35,14 @@ Instalar las siguientes herramientas a la discreción y neesidad del usuario.
 ![processing_img](https://user-images.githubusercontent.com/47252665/106808357-e7991f00-662f-11eb-8038-75ab7a09e618.png)
 - IDE basada en java que permite crear diferentes aplicaciones gráficas.
 - De igual manera permite interactuar con puertos seriales, por lo cuál es perfecta para crear interfaces para microcontroladores.
+- Descargar en : https://processing.org/download/
 ### Eltima Virtual PORT
 ![ELTIMA img](https://www.eltima.com/imgnew/products/product-info/i-win/winLargeVspdIcon@2x.png)
 - Esta herramienta permite crear y enlazar puertos virtuales.
 - Esta herramienta es excelente para probar los puertos seriales y así no tener la necesidad de utilizar un microcontrolador, aunque  en este caso nosotro si utilizamos uno.
+- Descargar en :  https://www.eltima.com/vspd-post-download.html
+
+## Manual de Usuario
+- Conectar el microcontrolador programado a uno de los puertos USB de la computadora.
+- Modificar la línea 19 del codigo de processing a:    myPort = new Serial(this, puerto conectado al micro , 115200, 'N', 8, 1);   donde puerto conectado al micro se tiene que reemplazar por "puerto conectado al micro".
+
