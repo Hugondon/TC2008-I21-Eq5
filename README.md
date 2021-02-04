@@ -64,10 +64,10 @@ donde puerto conectado al micro se tiene que reemplazar por "puerto conectado al
 - Utilizar los push buttons del microcontrolador para alternar entre problemas.
 
 ## Semaforos en FreeRTOS
-- Equivalente a p()
+- Equivalente a operación p()
 
-  osSemaphoreWait(binarySem_uartHandle, osWaitForever);
-- Equivalente a v()
+  `osSemaphoreWait(binarySem_uartHandle, osWaitForever);`
+- Equivalente a operación v()
 
   osSemaphoreRelease(binarySem_uartHandle);
 - Crear semáforo
