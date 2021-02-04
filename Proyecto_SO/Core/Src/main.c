@@ -76,7 +76,7 @@ osSemaphoreId Sem_lugares_mesa_hamburguesaHandle;
 /* USER CODE BEGIN PV */
 bool run_first_exercise = false, run_second_exercise = false, run_our_exercise = false;
 bool zona_asegurada = false, dragon_disponible = true;
-uint8_t disp1ay[39][8]={
+uint8_t disp1ay[41][8]={
 {0b00000000,0b01111110,0b10000001,0b10000001,0b10000001,0b10000001,0b01111110,0b00000000},
 {0b00000000,0b10000000,0b10000100,0b10000010,0b11111111,0b10000000,0b10000000,0b00000000},
 {0b00000000,0b10000010,0b11000001,0b10100001,0b10010001,0b10001110,0b00000000,0b00000000},
@@ -116,6 +116,9 @@ uint8_t disp1ay[39][8]={
 {0b00000000,0b00100110,0b00101010,0b00110010,0b00000000,0b00111110,0b00100010,0b00111110},	// SO
 {0b00000000,0b00111110,0b00001010,0b00001110,0b00000000,0b00000010,0b00111010,0b00000110},	// P7
 {0b00000000,0b00111110,0b00001010,0b00001110,0b00000000,0b00111110,0b00101010,0b00111110},	// P8
+{0b00000111,0b00000100,0b01111000,0b01001000,0b01111000,0b00000000,0b11100000,0b10000000},	// LOL
+{0b00011100,0b00011000,0b01110000,0b11111110,0b11111100,0b01110100,0b00011000,0b00011100}	// Dragón
+
 };
 uint16_t timer_cnt = 0;
 /* USER CODE END PV */
@@ -679,6 +682,8 @@ void menu(void const * argument)
 		  run_second_exercise = false;
 		  run_our_exercise = !run_our_exercise;
 
+		  for(int i=1; i<9; i++) write_max(i, disp1ay[39][i-1]);
+
 	  }
 	 osDelay(200);
   }
@@ -874,14 +879,13 @@ void cliente(void const * argument)
 void printMatrix(void const * argument)
 {
   /* USER CODE BEGIN printMatrix */
-	uint8_t matrix_cnt = 9;
   /* Infinite loop */
   for(;;)
   {
 	  if(run_our_exercise){
-		  for(int i=1; i<9; i++) write_max(i, disp1ay[matrix_cnt][i-1]);
-		  matrix_cnt = (matrix_cnt > 0 ? matrix_cnt-1 : 9);
-		  osDelay(300);
+		  // for(int i=1; i<9; i++) write_max(i, disp1ay[matrix_cnt][i-1]);
+		  // matrix_cnt = (matrix_cnt > 0 ? matrix_cnt-1 : 9);
+		  osDelay(400);
 		  // write_string("JOTO");
 
 	  }else{
@@ -1014,6 +1018,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 		case 6:
 			dragon_disponible = true;
 			timer_cnt = 0;
+			for(int i=1; i<9; i++) write_max(i, disp1ay[40][i-1]);
 			HAL_TIM_Base_Stop_IT(&htim2);
 			break;
 		default:

@@ -16,7 +16,7 @@ void setup() { //<>//
   size(1024,640);
   
   // Inicialización Puerto Serial 
-  myPort = new Serial(this, "COM1", 115200, 'N', 8, 1);
+  myPort = new Serial(this, "COM5", 115200, 'N', 8, 1);
   
   // Imágenes
   button1 = loadImage("button.png");
@@ -62,7 +62,7 @@ void draw() {
   }
   else if(pedir_ayuda != -1 || asegurar_zona != -1 || matar_dragon != -1){
     buffer_semaforos = String.format("Pedir Ayuda = %d\nAsegurar Zona = %d\nMatar dragón = %d",pedir_ayuda,asegurar_zona,matar_dragon);
-    posX = 125;
+    posX = 700;
   }
   else{
     buffer_semaforos = String.format("");
