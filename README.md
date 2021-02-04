@@ -72,7 +72,7 @@ donde puerto conectado al micro se tiene que reemplazar por "puerto conectado al
 ## Problema propuesto
 - Este problema esta inspirado en las mecanicas del famoso juego multijugador LoL(League of Legends), donde la sincronización de los jugadores es clave para conseguir la victoria.
 
-Para derrotar al dragón de la Grieta del Invocador en el famosísimo League of Legends, es necesario que el jugador en jungla esté disponible para asegurarlo (BOTONAZO).
+Para derrotar al dragón de la Grieta del Invocador en el famosísimo League of Legends, es necesario que el jugador en jungla esté disponible para asegurarlo.
 Tendrá que llamar a bot (a través de un ping de ayuda) para así ayudar a completar el objetivo.
 De igual forma, para asegurar este objetivo es necesario que el área cerca del dragón esté despejada y esta solamente se encuentra en ese estado al estar jungla y bot ahí por 2 minutos.
 
