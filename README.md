@@ -32,3 +32,5 @@
 - El esquemático de la tarjeta se puede encontrar [aquí.](https://github.com/dhylands/stm32-test/blob/master/board-STM32F103-Mini/STM32F103C8T6-Schematic.pdf)
 ### Processing
 ![processing_img](https://user-images.githubusercontent.com/47252665/106808357-e7991f00-662f-11eb-8038-75ab7a09e618.png)
+- IDE basada en java que permite crear diferentes aplicaciones gráficas.
+- De igual manera permite interactuar con puertos seriales, por lo cuál es perfecta para crear interfaces para microcontroladores.
