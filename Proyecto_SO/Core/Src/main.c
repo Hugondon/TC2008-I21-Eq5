@@ -56,6 +56,9 @@ osThreadId cocineroTaskHandle;
 osThreadId cajeroTaskHandle;
 osThreadId clienteTaskHandle;
 osThreadId printMatrixTaskHandle;
+osThreadId pedir_ayudaTaskHandle;
+osThreadId asegurar_zonaTaHandle;
+osThreadId matar_dragonTasHandle;
 osSemaphoreId binarySem_uartHandle;
 osSemaphoreId binarySem_mesa_pedidos_disponibleHandle;
 osSemaphoreId binarySem_mesa_hamburguesas_disponibleHandle;
@@ -65,12 +68,14 @@ osSemaphoreId binarySem_mesa_hamburguesas_ocupadaHandle;
 osSemaphoreId binarySem_mesa_ordenes_ocupadaHandle;
 osSemaphoreId binarySem_ordenHandle;
 osSemaphoreId binarySem_cocinar_hamburguesasHandle;
-osSemaphoreId binarySem_dos_segundosHandle;
+osSemaphoreId binarySem_jungla_disponibleHandle;
+osSemaphoreId binarySem_bot_disponibleHandle;
 osSemaphoreId Sem_lugares_ocupadosHandle;
 osSemaphoreId Sem_lugares_disponiblesHandle;
 osSemaphoreId Sem_lugares_mesa_hamburguesaHandle;
 /* USER CODE BEGIN PV */
 bool run_first_exercise = false, run_second_exercise = false, run_our_exercise = false;
+bool zona_asegurada = false, dragon_disponible = true;
 uint8_t disp1ay[39][8]={
 {0b00000000,0b01111110,0b10000001,0b10000001,0b10000001,0b10000001,0b01111110,0b00000000},
 {0b00000000,0b10000000,0b10000100,0b10000010,0b11111111,0b10000000,0b10000000,0b00000000},
@@ -129,6 +134,9 @@ void cocinero(void const * argument);
 void cajero(void const * argument);
 void cliente(void const * argument);
 void printMatrix(void const * argument);
+void pedir_ayuda(void const * argument);
+void asegurar_zona(void const * argument);
+void matar_dragon(void const * argument);
 
 /* USER CODE BEGIN PFP */
 void write_byte(uint8_t byte);
@@ -216,9 +224,13 @@ int main(void)
   osSemaphoreDef(binarySem_cocinar_hamburguesas);
   binarySem_cocinar_hamburguesasHandle = osSemaphoreCreate(osSemaphore(binarySem_cocinar_hamburguesas), 1);
 
-  /* definition and creation of binarySem_dos_segundos */
-  osSemaphoreDef(binarySem_dos_segundos);
-  binarySem_dos_segundosHandle = osSemaphoreCreate(osSemaphore(binarySem_dos_segundos), 1);
+  /* definition and creation of binarySem_jungla_disponible */
+  osSemaphoreDef(binarySem_jungla_disponible);
+  binarySem_jungla_disponibleHandle = osSemaphoreCreate(osSemaphore(binarySem_jungla_disponible), 1);
+
+  /* definition and creation of binarySem_bot_disponible */
+  osSemaphoreDef(binarySem_bot_disponible);
+  binarySem_bot_disponibleHandle = osSemaphoreCreate(osSemaphore(binarySem_bot_disponible), 1);
 
   /* definition and creation of Sem_lugares_ocupados */
   osSemaphoreDef(Sem_lugares_ocupados);
@@ -247,8 +259,9 @@ int main(void)
 
   // Ejercicio propuesto
   max_init();
-  for(int i=1; i<9; i++) write_max(i, disp1ay[36][i-1]);
-  osSemaphoreWait(binarySem_dos_segundosHandle, osWaitForever);
+  for(int i =1; i<9; i++) write_max(i, disp1ay[36][i-1]);
+  osSemaphoreWait(binarySem_bot_disponibleHandle, osWaitForever);
+  osSemaphoreWait(binarySem_jungla_disponibleHandle, osWaitForever);
   /* USER CODE END RTOS_SEMAPHORES */
 
   /* USER CODE BEGIN RTOS_TIMERS */
@@ -295,6 +308,18 @@ int main(void)
   /* definition and creation of printMatrixTask */
   osThreadDef(printMatrixTask, printMatrix, osPriorityAboveNormal, 0, 128);
   printMatrixTaskHandle = osThreadCreate(osThread(printMatrixTask), NULL);
+
+  /* definition and creation of pedir_ayudaTask */
+  osThreadDef(pedir_ayudaTask, pedir_ayuda, osPriorityAboveNormal, 0, 128);
+  pedir_ayudaTaskHandle = osThreadCreate(osThread(pedir_ayudaTask), NULL);
+
+  /* definition and creation of asegurar_zonaTa */
+  osThreadDef(asegurar_zonaTa, asegurar_zona, osPriorityAboveNormal, 0, 128);
+  asegurar_zonaTaHandle = osThreadCreate(osThread(asegurar_zonaTa), NULL);
+
+  /* definition and creation of matar_dragonTas */
+  osThreadDef(matar_dragonTas, matar_dragon, osPriorityAboveNormal, 0, 128);
+  matar_dragonTasHandle = osThreadCreate(osThread(matar_dragonTas), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -371,7 +396,7 @@ static void MX_TIM2_Init(void)
   htim2.Instance = TIM2;
   htim2.Init.Prescaler = 1000-1;
   htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim2.Init.Period = 800-1;
+  htim2.Init.Period = 8000-1;
   htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;
   if (HAL_TIM_Base_Init(&htim2) != HAL_OK)
@@ -654,9 +679,6 @@ void menu(void const * argument)
 		  run_second_exercise = false;
 		  run_our_exercise = !run_our_exercise;
 
-		  /* Timer */
-		  HAL_TIM_Base_Start_IT(&htim2);
-		  // HAL_TIM_Base_Stop_IT(&htim2);
 	  }
 	 osDelay(200);
   }
@@ -857,7 +879,6 @@ void printMatrix(void const * argument)
   for(;;)
   {
 	  if(run_our_exercise){
-		  osSemaphoreWait(binarySem_dos_segundosHandle, osWaitForever);
 		  for(int i=1; i<9; i++) write_max(i, disp1ay[matrix_cnt][i-1]);
 		  matrix_cnt = (matrix_cnt > 0 ? matrix_cnt-1 : 9);
 		  osDelay(300);
@@ -868,6 +889,101 @@ void printMatrix(void const * argument)
 	  }
   }
   /* USER CODE END printMatrix */
+}
+
+/* USER CODE BEGIN Header_pedir_ayuda */
+/**
+* @brief Function implementing the pedir_ayudaTask thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_pedir_ayuda */
+void pedir_ayuda(void const * argument){
+  /* USER CODE BEGIN pedir_ayuda */
+	char *proceso_actual = "h";
+  /* Infinite loop */
+  for(;;){
+	  if(run_our_exercise && !HAL_GPIO_ReadPin(BTN_EXT0_GPIO_Port, BTN_EXT0_Pin)){
+
+		  // ---------------------------------------------------------------------------------------
+
+		  osSemaphoreWait(binarySem_uartHandle, osWaitForever);
+		  HAL_UART_Transmit(&huart1, (uint8_t *) proceso_actual, strlen(proceso_actual), 1000);
+		  osSemaphoreRelease(binarySem_uartHandle);
+		  osDelay(DELAY);
+
+		  // ---------------------------------------------------------------------------------------
+
+		  osSemaphoreRelease(binarySem_jungla_disponibleHandle);
+		  osSemaphoreRelease(binarySem_bot_disponibleHandle);
+
+	  }
+    osDelay(400);
+  }
+  /* USER CODE END pedir_ayuda */
+}
+
+/* USER CODE BEGIN Header_asegurar_zona */
+/**
+* @brief Function implementing the asegurar_zonaTa thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_asegurar_zona */
+void asegurar_zona(void const * argument)
+{
+  /* USER CODE BEGIN asegurar_zona */
+	char *proceso_actual = "i";
+  /* Infinite loop */
+	for(;;){
+		if(run_our_exercise){
+			osSemaphoreWait(binarySem_jungla_disponibleHandle, osWaitForever);
+			osSemaphoreWait(binarySem_bot_disponibleHandle, osWaitForever);
+
+			// ---------------------------------------------------------------------------------------
+
+			osSemaphoreWait(binarySem_uartHandle, osWaitForever);
+			HAL_UART_Transmit(&huart1, (uint8_t *) proceso_actual, strlen(proceso_actual), 1000);
+			osSemaphoreRelease(binarySem_uartHandle);
+
+			// ---------------------------------------------------------------------------------------
+
+			HAL_TIM_Base_Start_IT(&htim2);
+
+		}
+		osDelay(400);
+	}
+  /* USER CODE END asegurar_zona */
+}
+
+/* USER CODE BEGIN Header_matar_dragon */
+/**
+* @brief Function implementing the matar_dragonTas thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_matar_dragon */
+void matar_dragon(void const * argument)
+{
+  /* USER CODE BEGIN matar_dragon */
+	char *proceso_actual = "j";
+  /* Infinite loop */
+	for(;;){
+		if(run_our_exercise && zona_asegurada){
+			zona_asegurada = false;
+
+			osSemaphoreWait(binarySem_uartHandle, osWaitForever);
+			HAL_UART_Transmit(&huart1, (uint8_t *) proceso_actual, strlen(proceso_actual), 1000);
+			osSemaphoreRelease(binarySem_uartHandle);
+			osDelay(DELAY);
+
+			dragon_disponible = false;
+			HAL_TIM_Base_Start_IT(&htim2);
+
+		}
+		osDelay(400);
+	}
+  /* USER CODE END matar_dragon */
 }
 
 /**
@@ -888,11 +1004,23 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
   }
   /* USER CODE BEGIN Callback 1 */
   if ( htim->Instance == TIM2 ){
-    timer_cnt++;
-    if(timer_cnt == 2){
-    	osSemaphoreRelease(binarySem_dos_segundosHandle);
-    	timer_cnt=0;
-    }
+	timer_cnt++;
+
+	switch(timer_cnt){
+		case 2:
+			zona_asegurada = true;
+			HAL_TIM_Base_Stop_IT(&htim2);
+			break;
+		case 6:
+			dragon_disponible = true;
+			timer_cnt = 0;
+			HAL_TIM_Base_Stop_IT(&htim2);
+			break;
+		default:
+			break;
+
+	}
+
   }
   /* USER CODE END Callback 1 */
 }
