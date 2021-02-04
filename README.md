@@ -75,6 +75,7 @@ donde puerto conectado al micro se tiene que reemplazar por "puerto conectado al
   osSemaphoreDef(binarySem_mesa_pedidos_disponible);
   
   binarySem_mesa_pedidos_disponibleHandle = osSemaphoreCreate(osSemaphore(binarySem_mesa_pedidos_disponible), 1);
+  
 - Crear thread (proceso)
 
   osThreadDef(despachadorTask, despachador, osPriorityNormal, 0, 128);
