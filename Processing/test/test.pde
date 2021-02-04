@@ -4,10 +4,10 @@ Serial myPort;  // The serial port
 
 int count;
 
-String[] test = {"a","b","a","b","c","d","e","f","g","d"};
+String[] test = {"a","b","a","b","c","d","e","f","g","d","h","i","j"};
 
 void setup() {
-  myPort = new Serial(this, "COM1", 115200, 'N', 8, 1);
+  myPort = new Serial(this, "COM2", 115200, 'N', 8, 1);
   count = 0;
 }
 
@@ -19,5 +19,5 @@ void draw(){
 void mouseClicked() {
   myPort.write(test[count]);
   print(test[count]);
-  count =(count + 1)%10;
+  count =(count + 1)%13;
 }
