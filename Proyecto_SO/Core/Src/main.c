@@ -675,7 +675,6 @@ void menu(void const * argument)
 		  HAL_GPIO_WritePin(LED_EXT0_GPIO_Port, LED_EXT0_Pin, GPIO_PIN_RESET);
 		  HAL_GPIO_WritePin(LED_EXT1_GPIO_Port, LED_EXT1_Pin, GPIO_PIN_RESET);
 		  HAL_GPIO_TogglePin(LED_EXT2_GPIO_Port, LED_EXT2_Pin);
-		  HAL_GPIO_TogglePin(LED_BUILTIN_GPIO_Port, LED_BUILTIN_Pin);
 
 		  /* Banderas */
 		  run_first_exercise = false;
@@ -1011,11 +1010,11 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 	timer_cnt++;
 
 	switch(timer_cnt){
-		case 2:
+		case 4:
 			zona_asegurada = true;
 			HAL_TIM_Base_Stop_IT(&htim2);
 			break;
-		case 6:
+		case 10:
 			dragon_disponible = true;
 			timer_cnt = 0;
 			for(int i=1; i<9; i++) write_max(i, disp1ay[40][i-1]);
