@@ -17,6 +17,7 @@
 - [ ] Video demostrativo
 ---
 ## Herramientas utilizadas
+Instalar las siguientes herramientas a la discreción y neesidad del usuario.
 ### STM32CubeIDE
 ![stm32-cube-ide](https://user-images.githubusercontent.com/47252665/106367007-3465b880-6305-11eb-98c7-40b263969311.jpg)
 - Utilizado como herramienta para la programación del microcontrolador de la familia STM32.
