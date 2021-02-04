@@ -61,7 +61,7 @@ Instalar las siguientes herramientas a la discreción y neesidad del usuario.
   
   `TaskHandle = osThreadCreate(osThread(Task), NULL);`
   
- En donde `Task` es la tarea relacionada al proceso, `TaskHandler` es la función Handler asociada a la tarea, `osPriorityNormal` es la prioridad asignada a la tarea (se puede elegir entre 7 opciones), el `128` es el espacio de RAM destinado a la tarea y `TaskHandle` es un apuntador a la primera posición de memoria del Handler.
+En donde `Task` es la tarea relacionada al proceso, `TaskHandler` es la función Handler asociada a la tarea, `osPriorityNormal` es la prioridad asignada a la tarea (se puede elegir entre 7 opciones), el `128` es el espacio de RAM destinado a la tarea y `TaskHandle` es un apuntador a la primera posición de memoria del Handler.
   
 - Creación de un semáforo
 
@@ -69,13 +69,13 @@ Instalar las siguientes herramientas a la discreción y neesidad del usuario.
   
   `binarySemHandle = osSemaphoreCreate(osSemaphore(binarySem), 1);`
   
-   En donde `binarySem` es la variable que funge como abstracción del Semáforo, y el `1` es el valor inicial para el semáforo (cabe destacar que no pueden inicializarse en 0).
+En donde `binarySem` es la variable que funge como abstracción del Semáforo, y el `1` es el valor inicial para el semáforo (cabe destacar que no pueden inicializarse en 0).
   
 - Equivalente a operación p()
 
   `osSemaphoreWait(binarySemHandle, osWaitForever);`
   
-  En donde `osWaitForever` es un Timeout a la operación v() para evitar deadlocks.
+En donde `osWaitForever` es un Timeout a la operación v() para evitar deadlocks.
   
 - Equivalente a operación v()
 
