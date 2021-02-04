@@ -10,11 +10,11 @@
 ---
 ## Tareas
 - [X] Pseudocódigo Ejercicios de Clase (7 y 8)
-- [ ] Pseudocódigo Ejercicio Propuesto
+- [X] Pseudocódigo Ejercicio Propuesto
 - [X] Implementación ejercicios de Clase (7 y 8)
-- [ ] Implementación ejercicio Propuesto
+- [X] Implementación ejercicio Propuesto
 - [X] Manual de instalación/explicación
-- [ ] Video demostrativo
+- [X] Video demostrativo
 ---
 ## Herramientas utilizadas
 Instalar las siguientes herramientas a la discreción y neesidad del usuario.
@@ -72,7 +72,7 @@ donde puerto conectado al micro se tiene que reemplazar por "puerto conectado al
 ## Problema propuesto
 - Este problema esta inspirado en las mecanicas del famoso juego multijugador LoL(League of Legends), donde la sincronización de los jugadores es clave para conseguir la victoria.
 
-Para derrotar al dragón de la Grieta del Invocador en el famosísimo League of Legends, es necesario que el jugador en jungla esté disponible para asegurarlo (BOTONAZO).
+Para derrotar al dragón de la Grieta del Invocador en el famosísimo League of Legends, es necesario que el jugador en jungla esté disponible para asegurarlo.
 Tendrá que llamar a bot (a través de un ping de ayuda) para así ayudar a completar el objetivo.
 De igual forma, para asegurar este objetivo es necesario que el área cerca del dragón esté despejada y esta solamente se encuentra en ese estado al estar jungla y bot ahí por 2 minutos.
 
@@ -81,3 +81,7 @@ Una vez que jungla y bot estén disponibles y hayan despejado el área, el drag�
 Después de asegurarlo, ambos personajes dejarán de estar disponibles. 
 El dragón volverá a estar en la Grieta del Invocador después de los reglamentarios 6 minutos de haber sido derrotado.
 
+---
+## Video Demostrativo
+
+[Link al video](https://drive.google.com/drive/folders/1qpY7V7M-YAX1ldKsQ7_L6k8iIiCXulyH?usp=sharing)
