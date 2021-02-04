@@ -62,3 +62,21 @@ myPort = new Serial(this, puerto conectado al micro , 115200, 'N', 8, 1);
 donde puerto conectado al micro se tiene que reemplazar por "puerto conectado al micro".
 - Correr el programa de Processing.
 - Utilizar los push buttons del microcontrolador para alternar entre problemas.
+
+## Semaforos en FreeRTOS
+- Equivalente a p()
+
+  osSemaphoreWait(binarySem_uartHandle, osWaitForever);
+- Equivalente a v()
+
+  osSemaphoreRelease(binarySem_uartHandle);
+- Crear semáforo
+
+  osSemaphoreDef(binarySem_mesa_pedidos_disponible);
+  
+  binarySem_mesa_pedidos_disponibleHandle = osSemaphoreCreate(osSemaphore(binarySem_mesa_pedidos_disponible), 1);
+- Crear thread (proceso)
+
+  osThreadDef(despachadorTask, despachador, osPriorityNormal, 0, 128);
+  
+  despachadorTaskHandle = osThreadCreate(osThread(despachadorTask), NULL);
