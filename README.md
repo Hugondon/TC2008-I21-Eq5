@@ -43,31 +43,44 @@ Instalar las siguientes herramientas a la discreción y neesidad del usuario.
 - Descargar [aquí](https://www.eltima.com/vspd-post-download.html)
 
 ## Manual de Usuario
-- Conectar el microcontrolador programado a uno de los puertos USB de la computadora.
-- Modificar la línea 19 (línea 10 en el código de test) del codigo de processing a:    
-myPort = new Serial(this, puerto conectado al micro , 115200, 'N', 8, 1);   
-donde puerto conectado al micro se tiene que reemplazar por "puerto conectado al micro".
-- Correr el programa de Processing.
-- Utilizar los push buttons del microcontrolador para alternar entre problemas.
+1. Descargar los diferentes softwares mencionados en Herramientas Utilizadas.
+2. Realizar las conexiones de hardware como se muestran en el esquemático (Doc/sch_Proyecto.pdf).
+3. Abrir el proyecto Proyecto_SO en el STM32CubeIDE y cargar el programa en la placa de desarrollo.
+4. Conectar la placa con el microcontrolador programado a uno de los puertos USB de la computadora.
+5. Verificar en cuál puertos se encuentra conectado el dispositivo (con ayuda del Administrador de Dispositivos)
+6. Modificar la línea 19 (línea 10 en el código de test) del codigo de processing a:    
+  `myPort = new Serial(this, puerto conectado al micro , 115200, 'N', 8, 1);`  
+   ,donde puerto conectado al micro se tiene que reemplazar por algo con la nomenclatura COMx.
+7. Correr el programa "interfaz" de Processing.
+8. Utilizar los push buttons conectados a la placa para alternar entre problemas.
 
-## Semaforos en FreeRTOS
-- Equivalente a operación p()
-
-  `osSemaphoreWait(binarySem_uartHandle, osWaitForever);`
-- Equivalente a operación v()
-
-  `osSemaphoreRelease(binarySem_uartHandle);`
-- Creación de un semáforo
-
-  `osSemaphoreDef(binarySem_mesa_pedidos_disponible);`
-  
-  `binarySem_mesa_pedidos_disponibleHandle = osSemaphoreCreate(osSemaphore(binarySem_mesa_pedidos_disponible), 1);`
-  
+## Threads y Semáforos en FreeRTOS
 - Creación de un thread (proceso).
 
-  `osThreadDef(despachadorTask, despachador, osPriorityNormal, 0, 128);`
+  `osThreadDef(Task, TaskHandler, osPriorityNormal, 0, 128);`
   
-  `despachadorTaskHandle = osThreadCreate(osThread(despachadorTask), NULL);`
+  `TaskHandle = osThreadCreate(osThread(Task), NULL);`
+  
+ En donde `Task` es la tarea relacionada al proceso, `TaskHandler` es la función Handler asociada a la tarea, `osPriorityNormal` es la prioridad asignada a la tarea (se puede elegir entre 7 opciones), el `128` es el espacio de RAM destinado a la tarea y `TaskHandle` es un apuntador a la primera posición de memoria del Handler.
+  
+- Creación de un semáforo
+
+  `osSemaphoreDef(binarySem);`
+  
+  `binarySemHandle = osSemaphoreCreate(osSemaphore(binarySem), 1);`
+  
+   En donde `binarySem` es la variable que funge como abstracción del Semáforo, y el `1` es el valor inicial para el semáforo (cabe destacar que no pueden inicializarse en 0).
+  
+- Equivalente a operación p()
+
+  `osSemaphoreWait(binarySemHandle, osWaitForever);`
+  
+  En donde `osWaitForever` es un Timeout a la operación v() para evitar deadlocks.
+  
+- Equivalente a operación v()
+
+  `osSemaphoreRelease(binarySemHandle);`
+
 ---
 ## Problema propuesto
 - Este problema esta inspirado en las mecanicas del famoso juego multijugador LoL(League of Legends), donde la sincronización de los jugadores es clave para conseguir la victoria.
@@ -85,3 +98,4 @@ El dragón volverá a estar en la Grieta del Invocador después de los reglament
 ## Video Demostrativo
 
 [Link al video](https://drive.google.com/drive/folders/1qpY7V7M-YAX1ldKsQ7_L6k8iIiCXulyH?usp=sharing)
+[Link al video de YouTube](https://youtu.be/Hr0SjX6N1tY)
