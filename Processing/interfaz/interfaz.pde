@@ -5,7 +5,7 @@ String receiveSerial, buffer_semaforos;
 PImage button1, bluepill;  // Declare a variable of type PImage
 
 //  Cuántas veces se han ejecutado los procesos
-int produciendo, consumiendo, despachando_orden, empacador, cocinero, cajero, pedido_cliente;
+int produciendo, consumiendo, despachando_orden, empacador, cocinero, cajero, pedido_cliente, pedir_ayuda, asegurar_zona, matar_dragon;
 
 // Posición en X para texto (buffer_semaforos)
 int posX;
@@ -31,6 +31,9 @@ void setup() { //<>//
   cocinero = -1;
   cajero = -1;
   pedido_cliente = -1;
+  pedir_ayuda = -1;
+  asegurar_zona = -1;
+  matar_dragon = -1;
   buffer_semaforos = "";
 }
 
@@ -57,6 +60,10 @@ void draw() {
     buffer_semaforos = String.format("Produciendo = %d\nConsumiendo = %d",produciendo,consumiendo);
     posX = 75;
   }
+  else if(pedir_ayuda != -1 || asegurar_zona != -1 || matar_dragon != -1){
+    buffer_semaforos = String.format("Pedir Ayuda = %d\nAsegurar Zona = %d\nMatar dragón = %d",pedir_ayuda,asegurar_zona,matar_dragon);
+    posX = 125;
+  }
   else{
     buffer_semaforos = String.format("");
     posX = 480;
@@ -81,6 +88,9 @@ void serialEvent(Serial p){
     cocinero = -1;
     cajero = -1;
     pedido_cliente = -1;
+    pedir_ayuda = -1;
+    asegurar_zona = -1;
+    matar_dragon = -1;
   }
   else if(receiveSerial.equals("b")){
     if(produciendo == -1){
@@ -95,6 +105,9 @@ void serialEvent(Serial p){
     cocinero = -1;
     cajero = -1;
     pedido_cliente = -1;
+    pedir_ayuda = -1;
+    asegurar_zona = -1;
+    matar_dragon = -1;
   }
   else if(receiveSerial.equals("c")){
   if(despachando_orden == -1){
@@ -114,6 +127,9 @@ void serialEvent(Serial p){
   }
   produciendo = -1;
   consumiendo = -1;
+  pedir_ayuda = -1;
+  asegurar_zona = -1;
+  matar_dragon = -1;
   despachando_orden = despachando_orden + 1;
   }
   else if(receiveSerial.equals("d")){
@@ -134,6 +150,9 @@ void serialEvent(Serial p){
     }
     produciendo = -1;
     consumiendo = -1;
+    pedir_ayuda = -1;
+    asegurar_zona = -1;
+    matar_dragon = -1;
     empacador = empacador + 1;
   }
     else if(receiveSerial.equals("e")){
@@ -154,6 +173,9 @@ void serialEvent(Serial p){
     }
     produciendo = -1;
     consumiendo = -1;
+    pedir_ayuda = -1;
+    asegurar_zona = -1;
+    matar_dragon = -1;
     cocinero = cocinero + 1;
    }
   else if(receiveSerial.equals("f")){
@@ -174,6 +196,9 @@ void serialEvent(Serial p){
     }
     produciendo = -1;
     consumiendo = -1;
+    pedir_ayuda = -1;
+    asegurar_zona = -1;
+    matar_dragon = -1;
     cajero = cajero + 1;
   }
   else if(receiveSerial.equals("g")){
@@ -194,7 +219,70 @@ void serialEvent(Serial p){
     }
     produciendo = -1;
     consumiendo = -1;
+    pedir_ayuda = -1;
+    asegurar_zona = -1;
+    matar_dragon = -1;
     pedido_cliente++;
+  }
+  else if(receiveSerial.equals("h")){
+    if(pedir_ayuda == -1){
+      pedir_ayuda = 0;
+    }
+    if(asegurar_zona == -1){
+      asegurar_zona = 0;
+    }
+    if(cocinero == -1){
+      cocinero = 0;
+    }
+    if(matar_dragon == -1){
+      matar_dragon = 0;
+    }
+    produciendo = -1;
+    consumiendo = -1;
+    despachando_orden = -1;
+    empacador = -1;
+    cocinero = -1;
+    cajero = -1;
+    pedido_cliente = -1;
+    pedir_ayuda++;
+  }
+    else if(receiveSerial.equals("i")){
+    if(pedir_ayuda == -1){
+      pedir_ayuda = 0;
+    }
+    if(asegurar_zona == -1){
+      asegurar_zona = 0;
+    }
+    if(matar_dragon == -1){
+      matar_dragon = 0;
+    }
+    produciendo = -1;
+    consumiendo = -1;
+    despachando_orden = -1;
+    empacador = -1;
+    cocinero = -1;
+    cajero = -1;
+    pedido_cliente = -1;
+    asegurar_zona++;
+  }
+    else if(receiveSerial.equals("j")){
+    if(pedir_ayuda == -1){
+      pedir_ayuda = 0;
+    }
+    if(asegurar_zona == -1){
+      asegurar_zona = 0;
+    }
+    if(matar_dragon == -1){
+      matar_dragon = 0;
+    }
+    produciendo = -1;
+    consumiendo = -1;
+    despachando_orden = -1;
+    empacador = -1;
+    cocinero = -1;
+    cajero = -1;
+    pedido_cliente = -1;
+    matar_dragon++;
   }
   redraw();
 }
