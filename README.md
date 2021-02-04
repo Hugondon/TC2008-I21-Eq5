@@ -69,15 +69,15 @@ donde puerto conectado al micro se tiene que reemplazar por "puerto conectado al
   `osSemaphoreWait(binarySem_uartHandle, osWaitForever);`
 - Equivalente a operación v()
 
-  osSemaphoreRelease(binarySem_uartHandle);
-- Crear semáforo
+  `osSemaphoreRelease(binarySem_uartHandle);`
+- Creación de un semáforo
 
-  osSemaphoreDef(binarySem_mesa_pedidos_disponible);
+  `osSemaphoreDef(binarySem_mesa_pedidos_disponible);`
   
-  binarySem_mesa_pedidos_disponibleHandle = osSemaphoreCreate(osSemaphore(binarySem_mesa_pedidos_disponible), 1);
+  `binarySem_mesa_pedidos_disponibleHandle = osSemaphoreCreate(osSemaphore(binarySem_mesa_pedidos_disponible), 1);`
   
-- Crear thread (proceso)
+- Creación de un thread (proceso).
 
-  osThreadDef(despachadorTask, despachador, osPriorityNormal, 0, 128);
+  `osThreadDef(despachadorTask, despachador, osPriorityNormal, 0, 128);`
   
-  despachadorTaskHandle = osThreadCreate(osThread(despachadorTask), NULL);
+  `despachadorTaskHandle = osThreadCreate(osThread(despachadorTask), NULL);`
